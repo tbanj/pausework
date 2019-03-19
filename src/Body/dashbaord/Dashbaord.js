@@ -1,26 +1,59 @@
 import React from 'react';
 import './dashboard.scss';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import InfiniteCalendar from 'react-infinite-calendar';
 import 'react-infinite-calendar/styles.css'; // only needs to be imported once
 
 
 // Render the Calendar
 var today = new Date();
+var tom= new Date()+1;
+var userMaxSelect = new Date() +20;
+var userCantSlect =new Date() -1;
+
+
 var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
  
+var totalAbsenceSubmitted = [
+    // type, stopDate, approvalBy, status
+    {type: 'sick', daysRequested:6, startDate: '01/12/2018',stopDate: '01/18/2018', status: 'Pending', btnColor: 'btn btn-warning'},
+    {type: 'Maternity Leave', daysRequested: 60, startDate: '07/01/2018', stopDate: '09/01/2017', status: 'Rejected', btnColor: 'btn btn-danger'},
+    {type: 'Family time(Engagement)', daysRequested: 5, startDate: '03/01/2019', stopDate: '03/05/2018', status: 'Pending', btnColor: 'btn btn-warning'},
+    
+    {type: 'Sick', daysRequested: 3, startDate: '02/18/2018', stopDate: '02/21/2017', status: 'Pending', btnColor: 'btn btn-warning'},
+    {type: 'Family time(Naming Ceremony)', daysRequested: 30, startDate: '05/30/2018', stopDate: '06/01/2018', status: 'Rejected', btnColor: 'btn btn-danger'}
+]
 
-var dateToshowstart =new Date(2019, 1, 28);
-var dateToshowend =new Date(2019, 1, 28);
 
-var dateToshowstart1 =new Date(2019, 2, 31);
-var dateToshowend1 =new Date(2019, 2, 31);
+var absenceSummary = [
+    // type, stopDate, approvalBy, status
+    {type: 'sick', daysOff:2, startDate: '01/12/2018', stopDate: '01/18/2018', approvalBy: 'Chidima Newton',status: 'Approved', btnColor: 'btn btn-primary'},
+    {type: 'Maternity Leave', daysOff: 30, startDate: '01/12/2018',  stopDate: '09/01/2017', approvalBy: 'Chidima Newton',status: 'Approved', btnColor: 'btn btn-primary'},
+    {type: 'Annual Leave', daysOff: 20, sstartDate: '01/12/2018', stopDate: '06/01/2018', approvalBy: 'Chidima Newton',status: 'Approved', btnColor: 'btn btn-primary'}
+]
 
-var dateToshowstart2 =new Date(2019, 3, 31);
-var dateToshowend2 =new Date(2019, 3, 31);
+// var dateToshowstart =new Date(2019, 1, 28);
+// var dateToshowend =new Date(2019, 1, 28);
 
-var dateToshowstart3 =new Date(2019, 4, 31);
-var dateToshowend3 =new Date(2019, 4, 31);
+// var dateToshowstart1 =new Date(2019, 2, 31);
+// var dateToshowend1 =new Date(2019, 2, 31);
+
+// var dateToshowstart2 =new Date(2019, 3, 31);
+// var dateToshowend2 =new Date(2019, 3, 31);
+
+// var dateToshowstart3 =new Date(2019, 4, 31);
+// var dateToshowend3 =new Date(2019, 4, 31);
+
+var calendarDate = [
+    new Date(2019 , 0, 31), new Date(2019, 1, 28), new Date(2019, 2, 31), new Date(2019, 3, 30),
+]
+
+var MoreCalendarDate;
+
+// function displayGreetings () {
+//     console.log('welcome on board');
+// }
+// displayGreetings();
  
 
 let listLeave= [
@@ -55,6 +88,9 @@ class Dashboard extends React.Component {
           approveRequest: [
               
           ],
+          count: 0,
+          clickNotice: null,
+          showMore: false,
           availableRequest: [],
           staffInfo: [],
         };
@@ -68,11 +104,47 @@ class Dashboard extends React.Component {
         this.setState({staffInfo: staffDetail })
         console.log(this.state.availableRequest);
         
+        // this.setState({showMore: displayGreetings })
+        
       }
       
+      checkCklick() {
+        var changeCalender = 0;
+        var dchangeCalender= changeCalender+ 1;
+        // this.setState({count: this.state.count + 1 });
+        // if(this.state.count >=1) {
+        //     // this.setState({showMore: !this.state.showMore });
+        //     // this.state.count= 0;
+        // }
+        this.setState({showMore: !this.state.showMore });
+        
+
+        console.log(changeCalender + this.state.count);
+
+        MoreCalendarDate = [
+            new Date(2019 , 0, 31), new Date(2019, 1, 28), new Date(2019, 2, 31), new Date(2019, 3, 30),
+            new Date(2019 , 4, 2), new Date(2019, 5, 13), new Date(2019, 6, 25), new Date(2019, 7, 21),
+            new Date(2019 , 8, 16), new Date(2019, 9, 8), new Date(2019, 10, 30), new Date(2019, 11, 24)
+        ]
+        var rem =[];
+
+        for (var i=0 ;i<calendarDate.length; i++){
+            var bd = MoreCalendarDate.filter(function (e) {
+                return e === calendarDate[i];
+            });
+            rem.push(bd)
+        
+        }
+        MoreCalendarDate.splice(0,rem.length);
+        // console.log(MoreCalendarDate);
+        // this.setState({showMore: MoreCalendarDate })
+         console.log(MoreCalendarDate);
+         
+      }
 
     render() {
         // is use to print the contents of the array
+        // this will make below array available once the app has  initialize
         const {approveRequest} = this.state;
         const {availableRequest} = this.state;
         const {staffInfo} = this.state;
@@ -169,35 +241,40 @@ class Dashboard extends React.Component {
                                                         </div>
                                                     })
                                                 }
-                                                
-                                                {/* <a href="#" className="btn btn-primary">Go somewhere</a> */}
                                             </div>
                                         </div>
                                     </div>
 
-                                   
-
-                                    {/* <div className="col-3">
-                                        <button className="statTitle">Approve Request</button>
-                                        <p className="statDayLeft">4</p>
-                                        <p>Out of 30 Leave Days Left</p>
-                                    </div> */}
                                 </div>
                         </div>
                         <div>
+
+
                             <p style={{marginTop: '10%'}} className="subTitleOne">Calender</p>
+                            <div style={{marginBottom: '4%'}}className="text-center">Upcoming Months <button  
+                            onClick={()=>{
+                                this.checkCklick();
+                                
+                            }}>{!this.state.showMore ?'Next': 'Previous'} </button></div>
+
                             <div className="row" style={{marginLeft: '5%', marginBottom: '15%'}}>
                                     
                                     {/*  col 1 calender*/}
-                                <div className="col-md-3">
+                                {!this.state.showMore ? calendarDate.map((data,index)=> {
+                                   
+                                    
+                                    return (<div key={index}>
+                                        <div className="col-md-3">
                                         <InfiniteCalendar
                                             width={300}
                                             height={400}
                                             selected={today}
-                                            disabledDays={[0,2]}
+                                            minDate = {userCantSlect}
+                                            // maxDate = {userMaxSelect}
+                                            disabledDays={[0,6]}
                                             minDate={lastWeek}
-                                            min = {dateToshowstart}
-                                            max= {dateToshowend}
+                                            min = {data}
+                                            max= {data}
                                             displayOptions={{
                                                 // layout: 'landscape',
                                                 showHeader: false,
@@ -206,17 +283,23 @@ class Dashboard extends React.Component {
                                             
                                          />
                                     </div> 
-
-                                    {/*  col 1 calender*/}
-                                <div className="col-md-3" >
+                                    </div>)
+                                }
+                                ): MoreCalendarDate.map((data,index)=> {
+                                    // console.log(this.state.showMore);
+                                    
+                                    return (<div key={index}>
+                                        <div className="col-md-3">
                                         <InfiniteCalendar
                                             width={300}
                                             height={400}
                                             selected={today}
-                                            disabledDays={[0,2]}
+                                            minDate = {userCantSlect}
+                                            // maxDate = {userMaxSelect}
+                                            disabledDays={[0,6]}
                                             minDate={lastWeek}
-                                            min = {dateToshowstart1}
-                                            max= {dateToshowend1}
+                                            min = {data}
+                                            max= {data}
                                             displayOptions={{
                                                 // layout: 'landscape',
                                                 showHeader: false,
@@ -225,50 +308,87 @@ class Dashboard extends React.Component {
                                             
                                          />
                                     </div> 
+                                    </div>)
+                                }
+                                )}
 
+                                   
 
-                                    {/*  col 2 calender*/}
-                                <div className="col-md-3" >
-                                        <InfiniteCalendar
-                                            width={300}
-                                            height={400}
-                                            selected={today}
-                                            disabledDays={[0,2]}
-                                            minDate={lastWeek}
-                                            min = {dateToshowstart2}
-                                            max= {dateToshowend2}
-                                            displayOptions={{
-                                                // layout: 'landscape',
-                                                showHeader: false,
-                                                todayHelperRowOffset:1
-                                              }}
-                                            
-                                         />
-                                    </div> 
-
-                                    {/*  col 3 calender*/}
-                                <div className="col-md-3" >
-                                        <InfiniteCalendar
-                                            width={300}
-                                            height={400}
-                                            selected={today}
-                                            disabledDays={[0,2]}
-                                            minDate={lastWeek}
-                                            min = {dateToshowstart3}
-                                            max= {dateToshowend3}
-                                            displayOptions={{
-                                                // layout: 'landscape',
-                                                showHeader: false,
-                                                todayHelperRowOffset:1
-                                              }}
-                                            
-                                         />
-                                    </div> 
+                                    
                             </div>
                         </div>
 
 
+                        <p style={{marginTop: '10%'}} className="subTitleOne">Summary of Submitted Forms</p>
+                        <div className="row mb-5 py-3">
+                        <div className="col-12">
+                        <table className="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Request Days</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                          
+                          {/* {type: 'sick', daysRequested:6, startDate: '01/12/2018',
+                          stopDate: '01/18/2018', status: 'Approved', btnColor: 'btn btn-warning'},
+     */}
+                                {
+                                    totalAbsenceSubmitted.map((item, index) => {
+                                        return <tr key={index}>
+                                        <td>{item.type}</td>
+                                        <td>{item.daysRequested}</td>
+                                        <td>From: {item.startDate} To: {item.stopDate}</td>
+                                        <td><button className={item.btnColor}>{item.status}</button></td>
+                                        
+                                    </tr>
+                                    })
+                                }
+                   
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+
+
+
                         <p style={{marginTop: '10%'}} className="subTitleOne">All Absence</p>
+                        <div className="row mb-5 py-3">
+                        <div className="col-12">
+                        <table className="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Number Of Days</th>
+                                <th>Date</th>
+                                <th>Approved By</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                          
+                                {
+                                    absenceSummary.map((item, index) => {
+                                        return <tr key={index}>
+                                        <td>{item.type}</td>
+                                        <td>{item.daysOff}</td>
+                                        <td>From: {item.startDate} To: {item.stopDate}</td>
+                                        <td>{item.approvalBy}</td>
+                                        <td><button className={item.btnColor}>{item.status}</button></td>
+                                        
+                                    </tr>
+                                    })
+                                }
+                   
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+
+
                 </div>
 
             </div>
@@ -276,3 +396,4 @@ class Dashboard extends React.Component {
     }
 }
 export default Dashboard;
+

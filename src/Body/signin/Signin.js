@@ -1,5 +1,5 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { Link } from 'react-router-dom';
 
 var errorPassword = "minimum 6 characaters required";
@@ -114,7 +114,8 @@ class Signin extends React.Component{
                                     name="password"
                                     noValidate
                                     onChange={this.handleChange}/>
-
+                <div style={{fontWeight: 'bold'}} className="pull-right"> <a href=""> Forget Password ?</a></div>
+                          
                       {this.state.errorPassword ? <span className="text-danger">{errorPassword}</span>: ""} 
                       
                      {formErrors.password.length > 0 && (
@@ -124,8 +125,7 @@ class Signin extends React.Component{
               
                 <div style={{marginTop: '10%'}} className="text-center">
                       <div className="row col-md-8 offset-md-2">
-                          <div style={{marginBottom: '3%'}} className="col-md-8"> <button className="btn btn-info"> Forgot Password</button></div>
-                          <div className="col-md-4">
+                          <div className="col-md-10">
                                 {formValid(this.state) ? <Link to="/dashboard">
                               <button style={{height: '35px'}} className="btn btn-primary">
                                   <p>Login</p>

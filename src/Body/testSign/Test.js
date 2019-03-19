@@ -1,5 +1,5 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 // import './footer.scss';
 
 var firstError = "first name must be up to 3 characters";

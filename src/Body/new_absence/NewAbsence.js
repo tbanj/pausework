@@ -1,22 +1,28 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { Link } from 'react-router-dom';
 
-var employeeIdError = "first name must be up to 3 characters";
-var firstError = "first name must be up to 3 characters";
-var lastnameError = "minimum 3 characaters required";
-var leaveCheckBoxError= "invalid email address";
-var  dateleavestartError ="choose a date";
-var  dateleaveendError ="choose a date";
-var  leaveDetailError ="minimum 60 characaters required";
+var employeeIdError = "invalid employee Id ";
+var firstError = "invalid first name";
+var lastnameError = "invalid last name";
 
-var mininterest;
-var interests = [];
-// var formErrors;
-// var errorFirst = document.getElementById("checkFirst");
+var  leaveDetailError ="summarize why you are applying for a leave";
+var leavePurpose;
+var leavePurposeError = " you are yet to select purpose of leave"
 
 
 
+var reasonForTimeOff = [
+  {name:'Maternity Leave' , days: '30'},
+  {name:'Highly Stressed out' , days: '1'},
+  {name:'Annual Leave' , days: '20'},
+  {name:'Sick' , days: '3'},
+  
+]
+
+let date = new Date();
+// use to select current date and disabled passed date
+date = `${date.getFullYear()}-0${date.getMonth() + 1 }-${date.getDate()}`;
 
 const onlyLetterRegex = RegExp(/^[A-Za-z]+$/);
   
@@ -46,31 +52,45 @@ class NewAbsence extends React.Component {
         this.state = {
           firstName: null,
           lastName: null,
-          leaveCheckBox: null,
-          leaveStart: null,
-          leaveEnd: null,
+          
+          leaveStart: date,
+          leaveEnd:date,
           leaveDetail: null,
           employeeId: null,
+          reasonforLeave: 'Choose Leave Type',
+          timeDuration: null,
+          startTime: date,
+        stopTime: date,
+        timeDuration: '0 Day',
+        
           formErrors: {
             
             firstName: "",
             lastName: "",
             employeeId: "",
-            leaveCheckBox: "",
-            leaveStart: "",
-            leaveEnd: "",
             leaveDetail: "",
-            errorFirst: false,
-            errorLast: false,
-            errorleaveCheckBox: false,
-            errorleaveStart: false,
-            errorleaveEnd: false,
-            errorleaveDetail: false,
-            errorEmployee: false,
-          }
+            reasonforLeave: "",
+            timeDuration: "",
+            
+          },
+          showError: false,
+          errorFirst: false,
+          errorLast: false,
+          
+          errorleaveStart: false,
+          errorleaveEnd: false,
+          errorleaveDetail: false,
+          errorEmployee: false,
+          errorleavePurpose: false,
         };
       }
     
+      componentDidMount(){
+        //   componentDidMount is the method that makes the data
+        // available once the page load
+       
+        
+      }
       
 
       handleSubmit = e => {
@@ -80,17 +100,7 @@ class NewAbsence extends React.Component {
         
 
         if (formValid(this.state)) {
-          console.log(`
-           
-            First Name: ${this.state.firstName}
-            Last Name: ${this.state.lastName}
-            Employee Id: ${this.state.employeeId}
-            Type of Leave Request: ${[interests]}
-            Leave Start Date: ${this.state.leaveStart}
-            Leave Date Date: ${this.state.leaveEnd}
-            ReaSON for Leave Request: ${this.state.leaveDetail}
-          `);
-          alert('leave form submitted successful')
+          
         } else {
           console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
         }
@@ -100,10 +110,11 @@ class NewAbsence extends React.Component {
         this.setState({errorFirst: false});
         this.setState({errorLast: false});
         this.setState({errorEmployee: false});
-        // this.setState({errorleaveCheckBox: false});
-        // this.setState({errorleaveStart: false});
-        // this.setState({errorleaveEnd: false});
+        this.setState({errorleavePurpose: false});
+        this.setState({errorleaveStart: false});
+        this.setState({errorleaveEnd: false});
         this.setState({errorleaveDetail: false});
+        
 
         
 
@@ -115,54 +126,70 @@ class NewAbsence extends React.Component {
         switch (name) {
         
           case "firstName":
-              formErrors.firstName =  value.length >= 1 && value.length < 3 || !onlyLetterRegex.test(value)
+              formErrors.firstName =  value.length >= 1 && value.length < 2 || !onlyLetterRegex.test(value)
               ? firstError
               : "";
             break;
           case "lastName":
             formErrors.lastName =
-            value.length >= 1 && value.length < 3 ? lastnameError : "";
+            value.length >= 1 && value.length < 2 ? lastnameError : "";
             break;
             case "employeeId":
             formErrors.employeeId =
             value.length >= 1 && value.length < 3 ? employeeIdError : "";
             break;
 
-        //   case "leaveCheckBox":
-        //   formErrors.leaveCheckBox =
-        //   value.length >= 1 && value.length < 6 ? leaveCheckBoxError : "";
-        //   break;
-        //   case "leaveStart":
-        //     formErrors.leaveStart =
-        //     value.length >= 1 && value.length < 6 ? dateleavestartError : "";
-        //     break;
-            
-        //     case "leaveEnd":
-        //     formErrors.leaveEnd =
-        //     value.length >= 1 && value.length < 6 ? dateleaveendError : "";
-        //     break;
+            case "reasonforLeave":
+          formErrors.reasonforLeave =
+          this.state.reasonforLeave === "Choose Leave Type" ? leavePurposeError  : "";
+          break;
+          
 
             case "leaveDetail":
             formErrors.leaveDetail =
-            value.length >= 1 && value.length < 60  ? leaveDetailError : "";
+            value.length >= 1 && value.length < 5  ? leaveDetailError : "";
             break;
 
             
           default:
             break;
         }
-    
+
+        // acquiring leave purpose from input
+        leavePurpose =document.getElementById('marital').value;
+        this.setState({reasonforLeave: leavePurpose});
         this.setState({ formErrors, [name]: value }, () => 
         console.log(this.state)
         );
       };
 
+      handleStartTime = e => {
+        let startTimeValue = e.target.value;
+        console.log(startTimeValue);
+        this.setState({startTime: startTimeValue});
+        const start = startTimeValue.replace(/-/g, '');
+        // const stop = this.state.stopTime.replace(/-/g, '');
+        // const diff = stop - start
+        // this.setState({timeDuration: `${diff} Days`})
+        // console.log(this.state.timeDuration)
+    }
+    handleStopTime = e => {
+        let stopTimeValue = e.target.value;
+        this.setState({stopTime: stopTimeValue})
+        const start = this.state.startTime.replace(/-/g, '');
+        const stop = stopTimeValue.replace(/-/g, '');
+        const diff = stop - start
+        this.setState({timeDuration: `${diff} Days`})
+        console.log(diff)
+    }
+
     render() {
         const { formErrors } = this.state;
         return (
             <div>
-                <div className="row" style={{marginTop: "4.5%", marginBottom: "10%"}}>
-                        <div className="col-md-8 offset-md-2">
+                <div className="row" style={{marginTop: "4.5%", marginBottom: "10%", }}>
+                        <div style={{ paddingLeft: '0px', paddingRight: '0px', marginTop: '5%'}} className=" card col-md-8 offset-md-2">
+                        <div  style={{backgroundColor: '#ffb22b', height:'100px' }} ClassName="card-header"><h3 style={{textAlign: 'center', margingBottom: '5%', paddingTop:'30px' }}> Absence Request Form</h3></div>
                         <form className="container mb-5" onSubmit={this.handleSubmit} noValidate style={{padding: '2% 20%'}}>
                     <div className="">
                     <div id="parentEmployeeId" className="form-group">
@@ -201,62 +228,70 @@ class NewAbsence extends React.Component {
                    </div>
 
                    <div style={{marginTop: "5%"}} ><h6>Reason for requested leave: <span className="required">(please tick appropriate box)*</span></h6> </div>
-                   <div className="row form-group col-md-12 col-lg-12">
-                   <div className="form-check form-check-inline">
-                            <input onChange={this.handleChange} className="checkBoxSize form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
-                            <label id="labelAnnual" className="checkList form-check-label" htmlFor="inlineCheckbox1">Annual Leave</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input  className="checkBoxSize form-check-input" type="checkbox" id="inlineCheckbox2" value="option2"/>
-                            <label id="labelBereavment" className="checkList form-check-label" htmlFor="inlineCheckbox2">Bereavment</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input  className="checkBoxSize form-check-input" type="checkbox" id="inlineCheckbox3" value="option3"/>
-                            <label id="labelMaternity" className="checkList form-check-label" htmlFor="inlineCheckbox3">Maternity Leave</label>
-                        </div>
+                   <div className="row form-group col-md-6 col-lg-6 col-sm-12">
+                                <label htmlFor="gender"></label>
+                                <select className="form-control" onChange={this.handleChange} id="marital">
+                                <option >Choose Leave Type</option>
+                                {
+                        reasonForTimeOff.map(item => {
+                          
+                            return <option key={item.days}>{item.name}</option>
+                        })
+                    }
+                                </select>
 
-                        <div className="form-check form-check-inline">
-                            <input  className="checkBoxSize form-check-input" type="checkbox" id="inlineCheckbox4" value="option4"/>
-                            <label id="labelSick" className="checkList form-check-label" htmlFor="inlineCheckbox4">Sick</label>
-                        </div>
-                        <div className="checkBoxSize form-check form-check-inline">
-                            <input onChange={this.handleChange} className=" form-check-input" type="checkbox" id="inlineCheckbox5" value="option5"/>
-                            <label id="labelUnpaid" className="checkList form-check-label" htmlFor="inlineCheckbox5">Unpaid Leave</label>
-                        </div>
-                        <div className=" form-check form-check-inline">
-                            <input style={{width: '15px', height: '15px',}} onChange={this.handleChange} className=" form-check-input" type="checkbox" id="inlineCheckbox6" value="option6"/>
-                            <label id="labelParental" className="checkList form-check-label" htmlFor="inlineCheckbox6">Parental Leave</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input onChange={this.handleChange} className="form-check-input" type="checkbox" id="inlineCheckbox7" value="option7"/>
-                            <label id="labelOther" className="checkList form-check-label" htmlFor="inlineCheckbox7">other</label>
-                        </div>
-                        
-                    </div>
+                                {this.state.errorleavePurpose ?<span id="checkReason" 
+                                className="text-danger">{leavePurposeError }</span>: ""}
+                      
 
-                    <div style={{marginTop: "5%"}}><h6>Dates Requested:</h6></div>
+                                {formErrors.reasonforLeave !== "Choose Leave Type" && (
+                         <span className="text-danger">{formErrors.reasonforLeave}</span>
+              )}
+                              </div>
+
+                              <div style={{marginTop: "5%"}}><h6>Dates Requested:</h6></div>
                     <div className="row">
                         
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                         
                             <div className="form-group">
                                 
                                     <div className="">
-                                    <p>From</p> <input onChange={this.handleChangeDate} className="form-control" type="date"  id="date-input"></input>
+                                    <p>From</p> <input type="date" min={date} value={this.state.startTime} onChange={this.handleStartTime} className="form-control fa fa-calendar" ></input>
+                                    
                                     </div>
                             </div>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                         
                             <div className="form-group">
                                 
                                 <div className="">
-                                <p>To</p><input onChange={this.handleChangeDate} className="form-control" type="date"  id="date-input"></input>
+                                <p>To</p><input className="form-control fa fa-calendar" value={this.state.stopTime} onChange={this.handleStopTime} type="date" 
+                min={this.state.startTime}/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-4">
+                        
+                            <div className="form-group">
+                                
+                                <div className="">
+                                <div><p>Duration</p>
+                                <input 
+                                        value={this.state.timeDuration.includes('-') ? '0 Day' : this.state.timeDuration } 
+                                        className="form-control" disabled />
+                                    {
+                                        ((this.state.timeDuration === '0 Day' || this.state.timeDuration.includes('-')) 
+                                        && this.state.showError) ? 
+                                        <span className="text-danger">invalid duration of leave days</span> : '' 
+                                    }
+                                </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div style={{marginTop: "5%"}} className="form-group">
                         <textarea id= "inputText" name="leaveDetail"  type="text"  
                             className="form-control" noValidate onChange={this.handleChange}
@@ -274,15 +309,29 @@ class NewAbsence extends React.Component {
                 
                         <div className="text-center">
                                
-                               {formValid(this.state)? <Link to="/dashboard">
-                    <button style={{height: '35px'}} className="btn btn-primary">
+                               {formValid(this.state) && this.state.timeDuration !== '0 Day' && this.state.reasonforLeave !== "Choose Leave Type"? <Link to="/dashboard">
+                    <button style={{height: '35px'}} className="btn btn-primary" onClick={() =>{
+                        console.log(`
+           
+                        First Name: ${this.state.firstName}
+                        Last Name: ${this.state.lastName}
+                        Employee Id: ${this.state.employeeId}
+                        Type of Leave Request: ${this.state.reasonforLeave}
+                        Leave Start Date: ${this.state.leaveStart}
+                        Leave Date Date: ${this.state.leaveEnd}
+                        Reason for Leave : ${this.state.leaveDetail}
+                      `);
+                      alert('leave form submitted successful')
+                    }}>
                         <p>Submit Form Now</p>
                     </button>
                  </Link>: <button type="submit" className="btn btn-primary"
                                   onClick={() => { 
                                     if(this.state.firstName === null ||
                                       this.state.lastName === null|| this.state.employeeId === null
-                                      || this.state.leaveDetail === null) {
+                                      || this.state.leaveDetail === null
+                                      || this.state.reasonforLeave === "Choose Leave Type"
+                                      || this.state.timeDuration === '0 Day') {
 
                                       if(this.state.firstName === null) {
                                         this.setState({errorFirst: true});
@@ -303,6 +352,14 @@ class NewAbsence extends React.Component {
                                         this.setState({errorleaveDetail: true});
                                       }
   
+                                      if(this.state.reasonforLeave  === "Choose Leave Type") {
+                                        this.setState({errorleavePurpose: true});
+                                      }
+
+                                      if(this.state.timeDuration === '0 Day') {
+                                        this.setState({showError: true});
+                                      }
+
                                     //   if(this.state.email === null) {
                                     //     this.setState({errorEmail: true});
                                             

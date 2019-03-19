@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-var firstError = "first name must be up to 3 characters";
+var firstError = "first name must be up to 2 characters";
 var employeeIdError = "minimum 5 characaters required";
-var lastnameError = "minimum 3 characaters required";
+var lastnameError = "minimum 2 characaters required";
 var emailError= "invalid email address";
 var  passwordError ="minimum 6 characaters required";
 ;
@@ -101,11 +101,11 @@ class Signup extends React.Component{
             break;
           case "lastName":
             formErrors.lastName =
-            value.length >= 1 && value.length < 3 ? lastnameError : "";
+            value.length >= 1 && value.length < 2 ? lastnameError : "";
             break;
         case "employee_id":
             formErrors.employee_id =
-            value.length >= 1 && value.length < 3 ? employeeIdError : "";
+            value.length >= 1 && value.length < 2 ? employeeIdError : "";
             break;
           case "email":
             formErrors.email = emailRegex.test(value)
@@ -218,7 +218,7 @@ class Signup extends React.Component{
                     </div>
                         <div className="text-center">
                                
-                               {formValid(this.state)? <Link to="/signin">
+                               {formValid(this.state)? <Link to="/dashboard">
                     <button style={{height: '35px'}} className="btn btn-primary">
                         <p>Submit Form Now</p>
                     </button>

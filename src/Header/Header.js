@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 import './header.scss';
 import { Link } from 'react-router-dom';
@@ -27,6 +27,10 @@ class Header extends Component {
             </ul>
             <form className="form-inline my-2 my-lg-0">
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
+            <li className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/teamview">Team View</Link>
+              </li>
+
             <li className="nav-item">
                 <Link className="nav-link navChild setFontColor" to="/newabsence">New Absence</Link>
               </li>
