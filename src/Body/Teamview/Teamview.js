@@ -13,9 +13,9 @@ let user = [
 let leaveRequestByMembers = [
     {employee: user[0].firstname + " " + user[0].initial, department: 'Technical', vacation: 7+ " Days", vacationDuration: '01/10/2019 - 01/17/2019', sick: 1+ " Days"
 ,sickDuration: '02/10/2019 - 01/11/2019', maternity: 0+ " Days", maternityDuration:'Not Apply for',annualLeave: 0+ " Days", annualLeaveDuration: 'Not Apply for', totalDaysOff: 8 }
-  ,    {employee: user[1].firstname  + " "+ user[1].initial, department: 'Technical', vacation: 0+ " Days", vacationDuration: 'Not Apply for', sick: 1+ " Days"
+  ,    {employee: user[1].firstname  + " "+ user[1].initial, department: 'Human Resources', vacation: 0+ " Days", vacationDuration: 'Not Apply for', sick: 1+ " Days"
   ,sickDuration: '02/10/2019 - 01/11/2019', maternity: 30+ " Days", maternityDuration:'Not Apply for',annualLeave: 0+ " Days", annualLeaveDuration: 'Not Apply for', totalDaysOff: 31 },
-  {employee: user[2].firstname  + " "+ user[1].initial, department: 'Technical', vacation: 0+" Days" , vacationDuration: 'Not Apply for', sick: 1+ " Days"
+  {employee: user[2].firstname  + " "+ user[1].initial, department: 'Business Development', vacation: 0+" Days" , vacationDuration: 'Not Apply for', sick: 1+ " Days"
   ,sickDuration: '02/10/2019 - 01/11/2019', maternity: 0+ " Days", maternityDuration:'Not Apply for',annualLeave: 14+ " Days", annualLeaveDuration: '03/05/2019 - 03/19/2019', totalDaysOff: 15 },
 
     
