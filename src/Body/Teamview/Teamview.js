@@ -65,7 +65,7 @@ class Teamview extends React.Component {
                         <div>
 						 <p className="subTitleOne" >Teamview <span className="fas fa-rss"></span> </p>
 
-                         <p style={{marginTop: '10%'}} className="subTitleOne">Summary of Team Members Leave Profile</p>
+                         <p style={{marginTop: '10%'}} className="subTitleOne">Summary of Team Members Leave</p>
                         <div className="row mb-5 py-3">
                         <div className="col-12">
                         <table className="table table-hover">
@@ -120,7 +120,7 @@ class Teamview extends React.Component {
 
                                 {/* Summary of all leave tables for a year */}
 
-                                <p style={{marginTop: '10%'}} className="subTitleOne">Summary of Team Members Leave Profile</p>
+                                <p style={{marginTop: '10%'}} className="subTitleOne">Total Downtime</p>
                         <div className="row mb-5 py-3">
                         <div className="col-12">
                         <table className="table table-hover">
