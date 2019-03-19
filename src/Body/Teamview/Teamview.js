@@ -11,23 +11,23 @@ let user = [
 ]
 
 let leaveRequestByMembers = [
-    {employee: user[0].firstname + " " + user[0].initial, department: 'Technical', vacation: 7, vacationDuration: '01/10/2019 - 01/17/2019', sick: 1
-,sickDuration: '02/10/2019 - 01/11/2019', maternity: 0, maternityDuration:'Not Apply for',annualLeave: 0, annualLeaveDuration: 'Not Apply for', totalDaysOff: 8 }
-  ,    {employee: user[1].firstname  + " "+ user[1].initial, department: 'Technical', vacation: 0, vacationDuration: 'Not Apply for', sick: 1
-  ,sickDuration: '02/10/2019 - 01/11/2019', maternity: 30, maternityDuration:'Not Apply for',annualLeave: 0, annualLeaveDuration: 'Not Apply for', totalDaysOff: 8 },
-  {employee: user[2].firstname  + " "+ user[1].initial, department: 'Technical', vacation: 0, vacationDuration: 'Not Apply for', sick: 1
-  ,sickDuration: '02/10/2019 - 01/11/2019', maternity: 0, maternityDuration:'Not Apply for',annualLeave: 14, annualLeaveDuration: '03/05/2019 - 03/19/2019', totalDaysOff: 15 },
+    {employee: user[0].firstname + " " + user[0].initial, department: 'Technical', vacation: 7+ " Days", vacationDuration: '01/10/2019 - 01/17/2019', sick: 1+ " Days"
+,sickDuration: '02/10/2019 - 01/11/2019', maternity: 0, maternityDuration:'Not Apply for',annualLeave: 0+ " Days", annualLeaveDuration: 'Not Apply for', totalDaysOff: 8 }
+  ,    {employee: user[1].firstname  + " "+ user[1].initial, department: 'Technical', vacation: 0+ " Days", vacationDuration: 'Not Apply for', sick: 1+ " Days"
+  ,sickDuration: '02/10/2019 - 01/11/2019', maternity: 30+ " Days", maternityDuration:'Not Apply for',annualLeave: 0+ " Days", annualLeaveDuration: 'Not Apply for', totalDaysOff: 31 },
+  {employee: user[2].firstname  + " "+ user[1].initial, department: 'Technical', vacation: 0+" Days" , vacationDuration: 'Not Apply for', sick: 1+ " Days"
+  ,sickDuration: '02/10/2019 - 01/11/2019', maternity: 0+ " Days", maternityDuration:'Not Apply for',annualLeave: 14+ " Days", annualLeaveDuration: '03/05/2019 - 03/19/2019', totalDaysOff: 15 },
 
     
     
 ]
 
 let totalLevaes = [
-    {typeOfLeave: 'vacation', daysGiven: 10, date: 'January', noOfStaffs: 5, approvedBy: 'Chidimma'},
-    {typeOfLeave: 'sick', daysGiven: 10, date: 'February', noOfStaffs: 15, approvedBy: 'Mayowa'},
-    {typeOfLeave: 'Annual Leave', daysGiven: 140, date: 'April', noOfStaffs: 140, approvedBy: 'Chidimma'},
-    {typeOfLeave: 'Maternity', daysGiven: 90, date: 'May', noOfStaffs: 3, approvedBy: 'Chidimma'},
-    {typeOfLeave: 'Highly Stressed Out', daysGiven: 10, date: 'June', noOfStaffs: 10, approvedBy: 'Chidimma'}
+    {typeOfLeave: 'vacation', daysGiven: 10+ " Days", date: 'January', noOfStaffs: 5, approvedBy: 'Chidimma'},
+    {typeOfLeave: 'sick', daysGiven: 3 + " Days", date: 'February', noOfStaffs: 3, approvedBy: 'Mayowa'},
+    {typeOfLeave: 'Annual Leave', daysGiven: 140 + " Days", date: 'April', noOfStaffs: 140, approvedBy: 'Chidimma'},
+    {typeOfLeave: 'Maternity', daysGiven: 90 + " Days", date: 'May', noOfStaffs: 3, approvedBy: 'Chidimma'},
+    {typeOfLeave: 'Highly Stressed Out', daysGiven: 10+ " Days", date: 'June', noOfStaffs: 10, approvedBy: 'Chidimma'}
 ]
 
 
@@ -69,7 +69,7 @@ class Teamview extends React.Component {
                         <div className="row mb-5 py-3">
                         <div className="col-12">
                         <table className="table table-hover">
-                            <thead>
+                            <thead style={{ backgroundColor: '#ffa500'}}>
                             <tr>
                                 <th>Employee</th>
                                 <th>Department</th>
@@ -82,7 +82,7 @@ class Teamview extends React.Component {
                                 <th>Maternity-Duration</th>
                                 <th>Annual Leave</th>
                                 <th>Leave-Duration</th>
-                                <th>Total Days Off</th>
+                                <th>Total Days</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -97,13 +97,13 @@ class Teamview extends React.Component {
                                         <td>{item.employee}</td>
                                         <td>{item.department}</td>
                                         <td>{item.vacation}</td>
-                                        <td>{item.vacationDuration}</td>
+                                        <td >{item.vacationDuration}</td>
                                         <td>{item.sick}</td>
-                                        <td>{item.sickDuration}</td>
-                                        <td>{item.maternity}</td>
-                                        <td>{item.maternityDuration}</td>
+                                        <td >{item.sickDuration}</td>
+                                        <td >{item.maternity}</td>
+                                        <td >{item.maternityDuration}</td>
                                         <td>{item.annualLeave}</td>
-                                        <td>{item.annualLeaveDuration}</td>
+                                        <td >{item.annualLeaveDuration}</td>
                                         <td>{item.totalDaysOff}</td>
                                         
                                        
@@ -125,7 +125,7 @@ class Teamview extends React.Component {
                         <div className="col-12">
                         <table className="table table-hover">
                    
-                            <thead>
+                            <thead style={{ backgroundColor: '#ffa500'}}>
                             <tr>
                                 <th>Leave Type</th>
                                 <th>Days Given</th>
@@ -147,9 +147,9 @@ class Teamview extends React.Component {
                                     totalLevaes.map((item, index) => {
                                         return <tr key={index}>
                                         <td>{item.typeOfLeave}</td>
-                                        <td>{item.daysGiven}</td>
+                                        <td >{item.daysGiven}</td>
                                         <td>{item.date}</td>
-                                        <td>{item.noOfStaffs}</td>
+                                        <td >{item.noOfStaffs}</td>
                                         <td>{item.approvedBy}</td>
                                         
                                        
