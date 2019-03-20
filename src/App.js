@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 // import Header from './Header/Header';
 // import 'bootstrap/dist/css/bootstrap.min.css';
-import Header from './Header/Header';
+
 import Timeoff from './Body/Timeoff';
 import Footer from './Footer/Footer';
 import { BrowserRouter, Route, Switch,Redirect, Link} from 'react-router-dom';
@@ -20,7 +20,7 @@ class App extends Component {
       <BrowserRouter>
         <div>
 
-        <Header/>
+        
         <Switch>
             <Route exact path="/" exact component={Timeoff}/>
             <Route exact path="/signup" component={Signup}/>

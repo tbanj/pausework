@@ -1,3 +1,48 @@
+
+/* header css */
+.navHeader {
+    margin-bottom: 0px;
+    
+    // background: url("../img/bg-pattern.png"), linear-gradient(to left, #7b4397, #dc2430);
+
+}
+
+
+.navChild {
+    font-size: 15px;
+    // font-weight: bold;
+}
+
+.parentChild{
+    font-size: 25px;
+     
+    // font-weight: bold;
+}
+.fixednav{
+    position: fixed;
+    width: 100%;
+   
+}
+.signinHov {
+    p:hover {
+        color: #ffb22b !important;
+    }
+}
+a:hover {
+    color: #ffb22b;
+}
+
+.navBackground {
+    background-color: #7c4396;
+}
+
+.setFontColor {
+    color: white;
+}
+
+
+
+/* body css */
 .contentBackground {
     // background-color: #eee;
 }

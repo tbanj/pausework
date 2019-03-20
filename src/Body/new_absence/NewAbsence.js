@@ -187,6 +187,47 @@ class NewAbsence extends React.Component {
         const { formErrors } = this.state;
         return (
             <div>
+                 {/* header div nav */}
+            <div className="row navBackground fixed-top">
+            <nav className="navbar navbar-expand-lg  col-md-9 offset-md-1">
+          <button style={{border: '2px solid white'}}className="navbar-toggler" type="button" data-toggle="collapse"
+           data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
+              
+              <li className="nav-item">
+                <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
+              </li>
+            </ul>
+            <form className="form-inline my-2 my-lg-0">
+            <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
+            <li className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/teamview">Team View</Link>
+              </li>
+
+            <li className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/newabsence">New Absence</Link>
+              </li>
+
+            <li className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/dashboard">Dashboard</Link>
+              </li>
+              <li id="idSign" className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/signup">Signout</Link>
+              </li>
+            </ul>
+              
+            </form>
+          </div>
+        </nav>
+          </div>
+
+
+
+              {/* body div */}
                 <div className="row" style={{marginTop: "4.5%", marginBottom: "10%", }}>
                         <div style={{ paddingLeft: '0px', paddingRight: '0px', marginTop: '5%'}} className=" card col-md-8 offset-md-2">
                         <div  style={{backgroundColor: '#ffb22b', height:'100px' }} ClassName="card-header"><h3 style={{textAlign: 'center', margingBottom: '5%', paddingTop:'30px' }}> Absence Request Form</h3></div>

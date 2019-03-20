@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './signup.scss';
 
-var firstError = "first name must be up to 2 characters";
-var employeeIdError = "minimum 5 characaters required";
-var lastnameError = "minimum 2 characaters required";
+
+var firstError = "first name must be up to 2 characters and letters only";
+var employeeIdError = "valid employee Id required";
+var lastnameError = "minimum 2 characaters required and letters only";
 var emailError= "invalid email address";
 var  passwordError ="minimum 6 characaters required";
-;
+
 
 // var errorFirst = document.getElementById("checkFirst");
 
@@ -95,7 +97,7 @@ class Signup extends React.Component{
         switch (name) {
         
           case "firstName":
-              formErrors.firstName =  value.length >= 1 && value.length < 3 || !onlyLetterRegex.test(value)
+              formErrors.firstName =  value.length >= 1 && value.length < 2 || !onlyLetterRegex.test(value)
               ? firstError
               : "";
             break;
@@ -105,7 +107,7 @@ class Signup extends React.Component{
             break;
         case "employee_id":
             formErrors.employee_id =
-            value.length >= 1 && value.length < 2 ? employeeIdError : "";
+            value.length >= 1 && value.length < 5 ? employeeIdError : "";
             break;
           case "email":
             formErrors.email = emailRegex.test(value)
@@ -127,6 +129,46 @@ class Signup extends React.Component{
     render() {
         const { formErrors } = this.state;
         return(
+            <div>
+               {/* header div nav */}
+            <div className="row navBackground fixed-top">
+            <nav className="navbar navbar-expand-lg  col-md-9 offset-md-1">
+          <button style={{border: '2px solid white'}} className="navbar-toggler" type="button" data-toggle="collapse"
+           data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
+              
+              <li className="nav-item">
+                <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
+              </li>
+            </ul>
+            <form className="form-inline my-2 my-lg-0">
+            <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
+            
+              <li id="idSign" className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/signup">Signup</Link>
+              </li>
+
+              <li id="idSign" className="nav-item">
+                    <Link to="/signin">
+                            <button style={{height: '35px'}} className="btn btn-outline-primary my-2 my-sm-0 setFontColor signinHov">
+                                <p className="">Sign in</p>
+                            </button>
+                        </Link>
+              </li>
+            </ul>
+             
+            </form>
+          </div>
+        </nav>
+          </div>
+
+
+
+            {/* body div */}
             <div style={{marginTop: '4.3%' ,marginBottom: '10%'}}>
                 <div  className="row">
                     <div className="col-6 col-md-6">
@@ -267,7 +309,9 @@ class Signup extends React.Component{
                
             </div>
         
-        )
+        
+            </div>
+            )
     }
 }
 export default Signup;

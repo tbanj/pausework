@@ -3,7 +3,7 @@ import './dashboard.scss';
 
 import InfiniteCalendar from 'react-infinite-calendar';
 import 'react-infinite-calendar/styles.css'; // only needs to be imported once
-
+import { Link } from 'react-router-dom';
 
 // Render the Calendar
 var today = new Date();
@@ -150,7 +150,48 @@ class Dashboard extends React.Component {
         const {staffInfo} = this.state;
         console.log(staffInfo);
         return (
-            <div style={{marginTop: '100px', marginLeft: '3%'}}>
+            <div>
+                       {/* header div nav */}
+            <div className="row navBackground fixed-top">
+            <nav className="navbar navbar-expand-lg  col-md-9 offset-md-1">
+          <button style={{border: '2px solid white'}} className="navbar-toggler" type="button" data-toggle="collapse"
+           data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
+              
+              <li className="nav-item">
+                <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
+              </li>
+            </ul>
+            <form className="form-inline my-2 my-lg-0">
+            <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
+            <li className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/teamview">Team View</Link>
+              </li>
+
+            <li className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/newabsence">New Absence</Link>
+              </li>
+
+            <li className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/dashboard">Dashboard</Link>
+              </li>
+              <li id="idSign" className="nav-item">
+                <Link className="nav-link navChild setFontColor" to="/signup">Signout</Link>
+              </li>
+            </ul>
+              
+            </form>
+          </div>
+        </nav>
+          </div>
+
+
+                {/* body div */}
+                <div style={{marginTop: '100px', marginLeft: '3%'}}>
                 <div className="container-fluid">
                         <div>
                         <p className="pValue"> <span className="pHeading">Employee: </span>Alabi Temitope</p>
@@ -392,7 +433,9 @@ class Dashboard extends React.Component {
                 </div>
 
             </div>
-        );
+        
+            </div>
+          );
     }
 }
 export default Dashboard;
