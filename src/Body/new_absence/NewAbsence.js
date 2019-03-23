@@ -189,8 +189,9 @@ class NewAbsence extends React.Component {
             <div>
                  {/* header div nav */}
             <div className="row navBackground fixed-top">
-            <nav className="navbar navbar-expand-lg  col-md-9 offset-md-1">
-          <button style={{border: '2px solid white'}}className="navbar-toggler" type="button" data-toggle="collapse"
+            <nav className="navbar navbar-expand-lg   navbar-light bg-light col-md-9 offset-md-1">
+                   <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
+          <button style={{border: '2px solid white'}} className="navbar-toggler" type="button" data-toggle="collapse"
            data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01"
             aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
@@ -198,9 +199,6 @@ class NewAbsence extends React.Component {
           <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
               
-              <li className="nav-item">
-                <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
-              </li>
             </ul>
             <form className="form-inline my-2 my-lg-0">
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
@@ -362,7 +360,7 @@ class NewAbsence extends React.Component {
                         Leave Date Date: ${this.state.leaveEnd}
                         Reason for Leave : ${this.state.leaveDetail}
                       `);
-                      alert('leave form submitted successful')
+                      alert('leave form submitted successful');
                     }}>
                         <p>Submit Form Now</p>
                     </button>

@@ -11,8 +11,10 @@ class Header extends Component {
         return (
           
   
-          <div className="row navBackground fixed-top">
-            <nav className="navbar navbar-expand-lg  col-md-9 offset-md-1">
+          <div className="row fixed-top">
+            <nav className="navbar navbar-expand-lg  navbar-light bg-light col-md-12">
+                {/* for logo */}
+                <Link style={{color: 'white'}} className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
           <button className="navbar-toggler" type="button" data-toggle="collapse"
            data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01"
             aria-expanded="false" aria-label="Toggle navigation">
@@ -21,9 +23,7 @@ class Header extends Component {
           <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
               
-              <li className="nav-item">
-                <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
-              </li>
+             
             </ul>
             <form className="form-inline my-2 my-lg-0">
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
