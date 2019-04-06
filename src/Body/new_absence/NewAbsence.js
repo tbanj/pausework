@@ -214,7 +214,7 @@ class NewAbsence extends React.Component {
                 <Link className="nav-link navChild setFontColor" to="/dashboard">Dashboard</Link>
               </li>
               <li id="idSign" className="nav-item">
-                <Link className="nav-link navChild setFontColor" to="/signup">Signout</Link>
+                <Link className="nav-link navChild setFontColor" to="/">Signout</Link>
               </li>
             </ul>
               

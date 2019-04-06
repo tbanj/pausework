@@ -179,7 +179,7 @@ class Dashboard extends React.Component {
                     <Link className="nav-link navChild setFontColor" to="/dashboard">Dashboard</Link>
                 </li>
                 <li id="idSign" className="nav-item">
-                    <Link className="nav-link navChild setFontColor" to="/signup">Signout</Link>
+                    <Link className="nav-link navChild setFontColor" to="/">Signout</Link>
                 </li>
                 </ul>
                 
@@ -203,7 +203,7 @@ class Dashboard extends React.Component {
                                         <p className="statDayLeft">4</p>
                                         <p>Out of 30 Leave Days Left</p>
                                     </div> */}
-                                    <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-6">
+                                    <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-12">
                                         <div className="card">
                                             <div className="statTitle card-header">
                                             Off Days Remaining
@@ -216,7 +216,7 @@ class Dashboard extends React.Component {
                                         </div>
                                     </div>
 
-                                    <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-6">
+                                    <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-12">
                                         <div className="card">
                                             <div className="statTitle card-header">
                                             Approved Request
@@ -240,7 +240,7 @@ class Dashboard extends React.Component {
                                     </div>
 
 
-                                    <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-6">
+                                    <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-12">
                                         <div className="card">
                                             <div className="statTitle card-header">
                                             Available Request
@@ -264,7 +264,7 @@ class Dashboard extends React.Component {
                                     </div>
 
 
-                                    <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-6">
+                                    <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-12">
                                         <div className="card">
                                             <div className="statTitle card-header">
                                             Staff Detail
