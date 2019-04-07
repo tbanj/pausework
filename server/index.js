@@ -3,7 +3,7 @@ const path = require('path')
 const express = require('express');
 const axios = require('axios');
 
-const port = process.env.PORT || 3000; 
+const port = process.env.PORT; 
 const app = express();
 const server = http.createServer(app);
 
