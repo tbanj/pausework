@@ -59,7 +59,7 @@ app.get('/holidays', (req, res) => {
         //   const keyRate1 = valueRateInner.findIndex(number => number === 4);
           const keyRate1 =valueRateInn.filter(number => number ==="New Year's Day");
          
-          console.log(valueRateIn);
+        //   console.log(valueRateIn);
         
           
             res.json(response.data);
