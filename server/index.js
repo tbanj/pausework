@@ -9,16 +9,21 @@ const server = http.createServer(app);
 
 
 
-app.use('*',express.static(path.join(__dirname, '../build')));
+if (process.env.NODE_ENV !== "production") {
+    app.use(express.static(path.join(__dirname, '../public')));
+} else {
+    app.use(express.static(path.join(__dirname, '../build')));
+}
+
 
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../build/index.html'));
-    // if (process.env.NODE_ENV !== "production") {
-    //     res.sendFile(path.join(__dirname, '../public/index.html'));
-    // } else {
-    //     res.sendFile(path.join(__dirname, '../build/index.html'));
-    // }
+    
+    if (process.env.NODE_ENV !== "production") {
+        res.sendFile(path.join(__dirname, '../public/index.html'));
+    } else {
+        res.sendFile(path.join(__dirname, '../build/index.html'));
+    }
 });
 
 
@@ -80,7 +85,7 @@ app.get('/holidaystwo', (req, res) => {
 
 server.listen(port, () => {
     console.log(`Server is listening for connection on ${port}`);
-    console.log(process.env.NODE_ENV);
-    console.log(params);
+    // console.log(process.env.NODE_ENV);
+    // console.log(params);
     
 });
