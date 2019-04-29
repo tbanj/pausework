@@ -1,6 +1,9 @@
 import React from 'react';
 import './signin.scss';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import env from '../../env';
+
 
 var errorPassword = "minimum 6 characaters required";
 var errorEmail = "invalid email address";
@@ -39,6 +42,8 @@ class Signin extends React.Component{
             errorPassword: false,
           }
         };
+
+        this.submitForm = this.submitForm.bind(this);
       }
     
       handleSubmit = e => {
@@ -85,6 +90,32 @@ class Signin extends React.Component{
     
         this.setState({ formErrors, [name]: value }, () => console.log(this.state));
       };
+
+      async submitForm() {
+        
+    
+        try {
+
+          const body = {
+            "email": this.state.email,
+            "password": this.state.password
+          }
+
+          const res = await axios.post(`${env.api}/employee/signin`, body);
+    
+          const token = res.data.data.token;
+    
+          localStorage.setItem('pause-token', token);
+    
+          this.props.history.push('/dashboard');
+        } catch (err) {
+          console.log(err);
+          console.log('An error occured', err.response);
+        }
+      }
+
+
+
     render() {
         const { formErrors } = this.state;
         return(
@@ -162,11 +193,10 @@ class Signin extends React.Component{
                 <div style={{marginTop: '10%'}} className="text-center">
                       <div className="row col-md-8 offset-md-2">
                           <div className="col-md-10">
-                                {formValid(this.state) ? <Link to="/dashboard">
-                              <button style={{height: '35px'}} className="btn btn-primary">
-                                  <p>Login</p>
-                              </button>
-                          </Link>
+                                {formValid(this.state) ? 
+
+                          <input type="submit" style={{height: '35px'}} 
+                          onClick={this.submitForm } className="btn btn-primary" value="Login 🚀 🥇"/>
                           :<button type="submit" onClick={() =>{
                                   if(this.state.email === null || this.state.password === null) {
                                     if(this.state.email === null) {

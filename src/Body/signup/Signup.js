@@ -105,7 +105,6 @@ class Signup extends React.Component{
             Email: ${this.state.email}
             Password: ${this.state.password}
           `);
-          alert('registration successful')
         } else {
           console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
         }
@@ -197,6 +196,85 @@ class Signup extends React.Component{
         // console.log(this.state)
 
       };
+
+      successSubmit = async () => {
+        try {
+          const body = {
+            "employee_id": this.state.employee_id,
+            "first_name": this.state.firstName,
+            "last_name": this.state.lastName,
+            "age": parseFloat(this.state.age),
+            "gender": this.state.gender,
+            "country": this.state.country,
+            "timezone": this.state.timezone,
+            "email": this.state.email,
+            "password": this.state.password
+          }
+          const res = await axios.post(`${env.api}/employee`, body);
+          console.log(res.data);
+          
+          const token = res.data.data.token;
+    
+          localStorage.setItem('pausework-token', token);
+    
+          this.props.history.push('/dashboard');
+        } catch (err) {
+          console.log('An error occured', err.response);
+        }
+      }
+
+      checkSubmitError =e  => { 
+        if(this.state.firstName === null ||
+          this.state.lastName === null|| this.state.password === null
+          || this.state.email === null
+          || this.state.age < 1 || this.state.age === null
+          || this.state.country === "Select Country"
+          || this.state.timezone === "Select Timezone"
+          || this.state.gender === "Select Gender") {
+
+          if(this.state.firstName === null) {
+            this.setState({errorFirst: true});
+            
+              console.log('there is error');
+              
+              
+          }
+          if(this.state.employee_id === null) {
+            this.setState({errorEmployee: true});
+          }
+          
+          if(this.state.lastName === null) {
+            this.setState({errorLast: true});
+          }
+
+          if(this.state.password === null) {
+            this.setState({errorPassword: true});
+          }
+
+          if(this.state.email === null) {
+            this.setState({errorEmail: true});
+                
+          }
+
+          if(this.state.country  === "Select Country") {
+            this.setState({errorCountry: true});
+          }
+
+          if(this.state.timezone  === "Select Timezone") {
+            this.setState({errorTimezone: true});
+          }
+          if(this.state.gender  === "Select Gender") {
+            this.setState({errorGender: true});
+          }
+
+          if(this.state.age  === null) {
+            this.setState({errorAge: true});
+          }
+        }
+
+        
+        
+      }
     render() {
         const { formErrors } = this.state;
         return(
@@ -397,72 +475,10 @@ class Signup extends React.Component{
                                
                                {formValid(this.state)? 
                     <input type="submit" style={{height: '35px'}} 
-                    onClick={async () => {
-                      try {
-                        const res = await axios.post(`${env.api}/employee`, this.state);
-                        const token = res.data.data.token;
-                  
-                        localStorage.setItem('pausework-token', token);
-                  
-                        this.props.history.push('/dashboard');
-                      } catch (err) {
-                        console.log('An error occured', err.response);
-                      }
-                    }} className="btn btn-primary" value="Submit Form Now 🚀"/>
+                    onClick={this.successSubmit } className="btn btn-primary" value="Submit Form Now 🚀"/>
                     
                 : <button type="submit" className="btn btn-primary"
-                                  onClick={() => { 
-                                    if(this.state.firstName === null ||
-                                      this.state.lastName === null|| this.state.password === null
-                                      || this.state.email === null
-                                      || this.state.age < 1 || this.state.age === null
-                                      || this.state.country === "Select Country"
-                                      || this.state.timezone === "Select Timezone"
-                                      || this.state.gender === "Select Gender") {
-
-                                      if(this.state.firstName === null) {
-                                        this.setState({errorFirst: true});
-                                        
-                                          console.log('there is error');
-                                          
-                                          
-                                      }
-                                      if(this.state.employee_id === null) {
-                                        this.setState({errorEmployee: true});
-                                      }
-                                      
-                                      if(this.state.lastName === null) {
-                                        this.setState({errorLast: true});
-                                      }
-  
-                                      if(this.state.password === null) {
-                                        this.setState({errorPassword: true});
-                                      }
-  
-                                      if(this.state.email === null) {
-                                        this.setState({errorEmail: true});
-                                            
-                                      }
-
-                                      if(this.state.country  === "Select Country") {
-                                        this.setState({errorCountry: true});
-                                      }
-
-                                      if(this.state.timezone  === "Select Timezone") {
-                                        this.setState({errorTimezone: true});
-                                      }
-                                      if(this.state.gender  === "Select Gender") {
-                                        this.setState({errorGender: true});
-                                      }
-
-                                      if(this.state.age  === null) {
-                                        this.setState({errorAge: true});
-                                      }
-                                    }
-
-                                    
-                                    
-                                  }}
+                                  onClick={this.checkSubmitError}
                                >Register</button>
                  
                 }

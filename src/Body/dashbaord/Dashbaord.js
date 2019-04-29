@@ -94,6 +94,9 @@ class Dashboard extends React.Component {
           availableRequest: [],
           staffInfo: [],
         };
+
+        // mounting function
+        this.logout = this.logout.bind(this);
       }
 
       componentDidMount(){
@@ -129,17 +132,30 @@ class Dashboard extends React.Component {
         var rem =[];
 
         for (var i=0 ;i<calendarDate.length; i++){
-            var bd = MoreCalendarDate.filter(function (e) {
-                return e === calendarDate[i];
-            });
-            rem.push(bd)
+            var bd = this.filterCalender(calendarDate[i]);
+            rem.push(bd);
         
         }
+
+        
+        
+        
         MoreCalendarDate.splice(0,rem.length);
         // console.log(MoreCalendarDate);
         // this.setState({showMore: MoreCalendarDate })
          console.log(MoreCalendarDate);
          
+      }
+
+      filterCalender(value) {
+        MoreCalendarDate.filter((e) =>{
+            return e === value;
+        });
+    }
+
+      logout() {
+        localStorage.removeItem('pausework-token');
+        this.props.history.push('/');
       }
 
     render() {
@@ -179,7 +195,9 @@ class Dashboard extends React.Component {
                     <Link className="nav-link navChild setFontColor" to="/dashboard">Dashboard</Link>
                 </li>
                 <li id="idSign" className="nav-item">
-                    <Link className="nav-link navChild setFontColor" to="/">Signout</Link>
+                    <Link className="nav-link navChild setFontColor" onClick={this.logout} 
+                    to="/">Signout</Link>
+                    {/* <a className="nav-link navChild setFontColor" onClick={this.logout} >Signout</a> */}
                 </li>
                 </ul>
                 
