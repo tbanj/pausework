@@ -29,6 +29,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "heroku-run-build-script": true,
   "browserslist": [
     ">0.2%",
     "not dead",
