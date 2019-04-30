@@ -104,7 +104,7 @@ class Dashboard extends React.Component {
         this.setState({approveRequest: listLeave });
         this.setState({availableRequest: pendingLeave });
         this.setState({staffInfo: staffDetail })
-        console.log(this.state.availableRequest);
+       
         
         // this.setState({showMore: displayGreetings })
         
@@ -158,7 +158,7 @@ class Dashboard extends React.Component {
         const {approveRequest} = this.state;
         const {availableRequest} = this.state;
         const {staffInfo} = this.state;
-        console.log(staffInfo);
+        
         return (
             <div>
                        {/* header div nav */}
