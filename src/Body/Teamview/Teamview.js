@@ -55,7 +55,7 @@ class Teamview extends React.Component {
 
 
     render () {
-        const {appUser } = this.state;
+        
         return (
 
             <div>

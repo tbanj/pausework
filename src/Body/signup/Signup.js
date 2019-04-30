@@ -33,7 +33,7 @@ var genderSelected;
 const emailRegex = RegExp(
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
   );
-  const onlyLetterRegex = RegExp(/^[A-Za-z]+$/)
+
   
   const formValid = ({ formErrors, ...rest }) => {
     let valid = true;
@@ -130,7 +130,7 @@ class Signup extends React.Component{
         switch (name) {
         
           case "firstName":
-              formErrors.firstName =  value.length >= 1 && value.length < 2 || !onlyLetterRegex.test(value)
+              formErrors.firstName =  value.length >= 1 && value.length < 2
               ? firstError
               : "";
             break;

@@ -10,7 +10,7 @@ var errorEmail = "invalid email address";
 const emailRegex = RegExp(
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
   );
-  const onlyLetterRegex = RegExp(/^[A-Za-z]+$/)
+  
   
   const formValid = ({ formErrors, ...rest }) => {
     let valid = true;
@@ -88,7 +88,8 @@ class Signin extends React.Component{
             break;
         }
     
-        this.setState({ formErrors, [name]: value }, () => console.log(this.state));
+        this.setState({ formErrors, [name]: value });
+        // , () => console.log(this.state)
       };
 
       async submitForm() {
@@ -105,7 +106,7 @@ class Signin extends React.Component{
     
           const token = res.data.data.token;
     
-          localStorage.setItem('pause-token', token);
+          localStorage.setItem('pausework-token', token);
     
           this.props.history.push('/dashboard');
         } catch (err) {
@@ -181,7 +182,7 @@ class Signin extends React.Component{
                                     name="password"
                                     noValidate
                                     onChange={this.handleChange}/>
-                <div style={{fontWeight: 'bold', float: 'right'}} > <a href=""> Forget Password ?</a></div>
+                <div style={{fontWeight: 'bold', float: 'right'}} > <a href="/"> Forget Password ?</a></div>
                           
                       {this.state.errorPassword ? <span className="text-danger">{errorPassword}</span>: ""} 
                       

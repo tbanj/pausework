@@ -10,17 +10,7 @@ class Timeoff extends React.Component {
     render () {
         return (
             <div  >
-            {/* <div className="row">
-                <div className="col-5">
-                    <img src="./../assets/img/image_timeoff.png" className="img-responsive imgClass"  alt="absence-application"></img>
-                    
-                    <img src={require('./../img/image_timeoff.jpg')} className="imgClass img-responsive" alt="absence"/>
-                
-                </div>
-                <div className="col-7">
-               
-                </div>
-            </div> */}
+            
 
 
             {/* header div nav */}
@@ -74,15 +64,11 @@ class Timeoff extends React.Component {
                     <div className="col-md-7 col-sm-12">
                             <h1  style={{paddingTop: '100px'}} className="headH">
                             Don't just disappear !!!    Inform your employer<span className="hidden-xs">.</span>
-                            {/* <span className="hidden-xs">.</span>
-                            <span className="hidden-sm hidden-md hidden-lg"></span> */}
-                        
+                           
                         </h1>
                         <div ><p className="firstP">This application is developed for learning purpose for managing staff seeking absence from work.</p>
                         </div>
-                {/* <p className="secondP">Endorsed by <a href="https://github.com/tbanj">hundreds</a> of software developers.</p>
-                <Link style={{marginBottom: "20px"}} className="btn btn-primary btn-lg"  to="/signup" role="button">Sign Up</Link> */}
-                    <div ></div>
+                 
                     </div>
                     </div>
                     </div>

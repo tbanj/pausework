@@ -24,7 +24,7 @@ let date = new Date();
 // use to select current date and disabled passed date
 date = `${date.getFullYear()}-0${date.getMonth() + 1 }-${date.getDate()}`;
 
-const onlyLetterRegex = RegExp(/^[A-Za-z]+$/);
+
   
   
   const formValid = ({ formErrors, ...rest }) => {
@@ -61,7 +61,7 @@ class NewAbsence extends React.Component {
           timeDuration: null,
           startTime: date,
         stopTime: date,
-        timeDuration: '0 Day',
+        
         
           formErrors: {
             
@@ -126,7 +126,7 @@ class NewAbsence extends React.Component {
         switch (name) {
         
           case "firstName":
-              formErrors.firstName =  value.length >= 1 && value.length < 2 || !onlyLetterRegex.test(value)
+              formErrors.firstName =  value.length >= 1 && value.length < 2 
               ? firstError
               : "";
             break;
@@ -167,7 +167,7 @@ class NewAbsence extends React.Component {
         let startTimeValue = e.target.value;
         console.log(startTimeValue);
         this.setState({startTime: startTimeValue});
-        const start = startTimeValue.replace(/-/g, '');
+        
         // const stop = this.state.stopTime.replace(/-/g, '');
         // const diff = stop - start
         // this.setState({timeDuration: `${diff} Days`})

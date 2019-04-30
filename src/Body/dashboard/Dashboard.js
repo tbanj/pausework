@@ -7,9 +7,8 @@ import { Link } from 'react-router-dom';
 
 // Render the Calendar
 var today = new Date();
-var tom= new Date()+1;
-var userMaxSelect = new Date() +20;
-var userCantSlect =new Date() -1;
+
+// var userCantSlect =new Date() -1;
 
 
 var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
@@ -113,12 +112,7 @@ class Dashboard extends React.Component {
       
       checkCklick() {
         var changeCalender = 0;
-        var dchangeCalender= changeCalender+ 1;
-        // this.setState({count: this.state.count + 1 });
-        // if(this.state.count >=1) {
-        //     // this.setState({showMore: !this.state.showMore });
-        //     // this.state.count= 0;
-        // }
+        
         this.setState({showMore: !this.state.showMore });
         
 
@@ -327,8 +321,6 @@ class Dashboard extends React.Component {
                                             width={300}
                                             height={400}
                                             selected={today}
-                                            minDate = {userCantSlect}
-                                            // maxDate = {userMaxSelect}
                                             disabledDays={[0,6]}
                                             minDate={lastWeek}
                                             min = {data}
@@ -352,7 +344,6 @@ class Dashboard extends React.Component {
                                             width={300}
                                             height={400}
                                             selected={today}
-                                            minDate = {userCantSlect}
                                             // maxDate = {userMaxSelect}
                                             disabledDays={[0,6]}
                                             minDate={lastWeek}
