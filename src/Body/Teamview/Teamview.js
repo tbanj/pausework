@@ -124,7 +124,7 @@ class Teamview extends React.Component {
                         <div className="row mb-5 py-3">
                         <div className="col-12">
                         <table className="table table-hover">
-                            <thead style={{ backgroundColor: '#ffa500'}}>
+                            <thead style={{ backgroundColor: '#007bff', color: '#ffffff'}}>
                             <tr>
                                 <th>Employee</th>
                                 <th>Department</th>
@@ -180,7 +180,7 @@ class Teamview extends React.Component {
                         <div className="col-12">
                         <table className="table table-hover">
                    
-                            <thead style={{ backgroundColor: '#ffa500'}}>
+                            <thead style={{ backgroundColor: '#007bff', color: '#ffffff'}}>
                             <tr>
                                 <th>Leave Type</th>
                                 <th>Days Given</th>

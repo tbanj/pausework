@@ -24,8 +24,7 @@ let date = new Date();
 // use to select current date and disabled passed date
 date = `${date.getFullYear()}-0${date.getMonth() + 1 }-${date.getDate()}`;
 
-const onlyLetterRegex = RegExp(/^[A-Za-z]+$/);
-  
+
   
   const formValid = ({ formErrors, ...rest }) => {
     let valid = true;
@@ -58,7 +57,7 @@ class NewAbsence extends React.Component {
           leaveDetail: null,
           employeeId: null,
           reasonforLeave: 'Choose Leave Type',
-          timeDuration: null,
+          
           startTime: date,
         stopTime: date,
         timeDuration: '0 Day',
@@ -133,7 +132,7 @@ class NewAbsence extends React.Component {
         switch (name) {
         
           case "firstName":
-              formErrors.firstName =  value.length >= 1 && value.length < 2 || !onlyLetterRegex.test(value)
+              formErrors.firstName =  value.length >= 1 && value.length < 2 
               ? firstError
               : "";
             break;
@@ -174,11 +173,7 @@ class NewAbsence extends React.Component {
         let startTimeValue = e.target.value;
         console.log(startTimeValue);
         this.setState({startTime: startTimeValue});
-        const start = startTimeValue.replace(/-/g, '');
-        // const stop = this.state.stopTime.replace(/-/g, '');
-        // const diff = stop - start
-        // this.setState({timeDuration: `${diff} Days`})
-        // console.log(this.state.timeDuration)
+       
     }
     handleStopTime = e => {
         let stopTimeValue = e.target.value;
@@ -237,12 +232,13 @@ class NewAbsence extends React.Component {
         </nav>
           </div>
 
+          
 
 
               {/* body div */}
                 <div className="row" style={{marginTop: "4.5%", marginBottom: "10%", }}>
                         <div style={{ paddingLeft: '0px', paddingRight: '0px', marginTop: '5%'}} className=" card col-md-8 offset-md-2">
-                        <div  style={{backgroundColor: '#ffb22b', height:'100px' }} ClassName="card-header"><h3 style={{textAlign: 'center', margingBottom: '5%', paddingTop:'30px' }}> Absence Request Form</h3></div>
+                        <div  style={{backgroundColor: '#007bff',color: '#ffffff', height:'100px' }} className="card-header"><h3 style={{textAlign: 'center', margingBottom: '5%', paddingTop:'30px' }}> Absence Request Form</h3></div>
                         <form className="container mb-5" onSubmit={this.handleSubmit} noValidate style={{padding: '2% 20%'}}>
                     <div className="">
                     <div id="parentEmployeeId" className="form-group">

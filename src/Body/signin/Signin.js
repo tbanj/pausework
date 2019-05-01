@@ -5,8 +5,10 @@ import axios from 'axios';
 import env from '../../env';
 
 
+
 var errorPassword = "minimum 6 characaters required";
 var errorEmail = "invalid email address";
+
 const emailRegex = RegExp(
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
   );
@@ -51,13 +53,8 @@ class Signin extends React.Component{
         e.preventDefault();
     
         if (formValid(this.state)) {
-          // console.log(`
-           
-            
-          //   Email: ${this.state.email}
-          //   Password: ${this.state.password}
-          // `);
-          alert('registration successful')
+        
+          
         } else {
           console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
         }
@@ -110,10 +107,16 @@ class Signin extends React.Component{
     
           this.props.history.push('/dashboard');
         } catch (err) {
-          console.log(err);
-          console.log('An error occured', err.response);
+          var loginChecker = document.getElementById("errorLogin");
+          loginChecker.style.display ="block";
+          
+          document.getElementById("errorContent").innerText=err.response.data['message'];
+          // console.log('An error occured', err.response);
         }
       }
+
+
+      
 
 
 
@@ -166,7 +169,11 @@ class Signin extends React.Component{
                    <div className="col-6 col-md-6">
                          <form className="container mb-5" onSubmit={this.handleSubmit} noValidate style={{padding: '2% 20%', marginTop: '35%'}}>
                     <div className="">
-                  
+                      <div id="errorLogin" style={{display: 'none'}} className="py-3">
+                        <div  id="errorContent" className="alert alert-danger" role="alert">
+                            
+                          </div>  
+                        </div>  
                     <div className="text-center form-group">
                     <label >Email address</label>
                     <input type="email" className="form-control"  placeholder="Enter email" 
@@ -176,12 +183,15 @@ class Signin extends React.Component{
                          <span className="text-danger">{formErrors.email}</span>
               )}
                    </div>
+                     
                 <div className="text-center form-group">
                     <label >Password</label>
                     <input type="password" className="form-control"  placeholder="Password" 
                                     name="password"
                                     noValidate
                                     onChange={this.handleChange}/>
+                      
+                                    
                 <div style={{fontWeight: 'bold', float: 'right'}} > <a href="/"> Forget Password ?</a></div>
                           
                       {this.state.errorPassword ? <span className="text-danger">{errorPassword}</span>: ""} 
