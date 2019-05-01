@@ -96,6 +96,11 @@ class Dashboard extends React.Component {
 
         // mounting function
         this.logout = this.logout.bind(this);
+
+        if(!localStorage.getItem('pausework-token')){
+            this.props.history.push('/');
+        }
+        
       }
 
       componentDidMount(){
@@ -150,6 +155,7 @@ class Dashboard extends React.Component {
       logout() {
         localStorage.removeItem('pausework-token');
         this.props.history.push('/');
+        
       }
 
     render() {

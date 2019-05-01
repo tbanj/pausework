@@ -24,7 +24,7 @@ let date = new Date();
 // use to select current date and disabled passed date
 date = `${date.getFullYear()}-0${date.getMonth() + 1 }-${date.getDate()}`;
 
-
+const onlyLetterRegex = RegExp(/^[A-Za-z]+$/);
   
   
   const formValid = ({ formErrors, ...rest }) => {
@@ -61,7 +61,7 @@ class NewAbsence extends React.Component {
           timeDuration: null,
           startTime: date,
         stopTime: date,
-        
+        timeDuration: '0 Day',
         
           formErrors: {
             
@@ -83,6 +83,13 @@ class NewAbsence extends React.Component {
           errorEmployee: false,
           errorleavePurpose: false,
         };
+
+        this.logout = this.logout.bind(this);
+
+        if(!localStorage.getItem('pausework-token')){
+            this.props.history.push('/');
+        }
+
       }
     
       componentDidMount(){
@@ -126,7 +133,7 @@ class NewAbsence extends React.Component {
         switch (name) {
         
           case "firstName":
-              formErrors.firstName =  value.length >= 1 && value.length < 2 
+              formErrors.firstName =  value.length >= 1 && value.length < 2 || !onlyLetterRegex.test(value)
               ? firstError
               : "";
             break;
@@ -167,7 +174,7 @@ class NewAbsence extends React.Component {
         let startTimeValue = e.target.value;
         console.log(startTimeValue);
         this.setState({startTime: startTimeValue});
-        
+        const start = startTimeValue.replace(/-/g, '');
         // const stop = this.state.stopTime.replace(/-/g, '');
         // const diff = stop - start
         // this.setState({timeDuration: `${diff} Days`})
@@ -181,6 +188,12 @@ class NewAbsence extends React.Component {
         const diff = stop - start
         this.setState({timeDuration: `${diff} Days`})
         console.log(diff)
+    }
+
+    logout() {
+      localStorage.removeItem('pausework-token');
+      this.props.history.push('/');
+      
     }
 
     render() {
@@ -214,8 +227,9 @@ class NewAbsence extends React.Component {
                 <Link className="nav-link navChild setFontColor" to="/dashboard">Dashboard</Link>
               </li>
               <li id="idSign" className="nav-item">
-                <Link className="nav-link navChild setFontColor" to="/">Signout</Link>
-              </li>
+                    <Link className="nav-link navChild setFontColor" onClick={this.logout} 
+                    to="/">Signout</Link>
+                     </li>
             </ul>
               
             </form>

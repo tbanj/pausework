@@ -51,12 +51,12 @@ class Signin extends React.Component{
         e.preventDefault();
     
         if (formValid(this.state)) {
-          console.log(`
+          // console.log(`
            
             
-            Email: ${this.state.email}
-            Password: ${this.state.password}
-          `);
+          //   Email: ${this.state.email}
+          //   Password: ${this.state.password}
+          // `);
           alert('registration successful')
         } else {
           console.error("FORM INVALID - DISPLAY ERROR MESSAGE");

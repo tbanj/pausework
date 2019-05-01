@@ -40,6 +40,14 @@ class Teamview extends React.Component {
         this.state = {
             appUser: []
         }
+
+        this.logout = this.logout.bind(this);
+
+        if(!localStorage.getItem('pausework-token')){
+            this.props.history.push('/');
+        }
+
+        
     }
 
     componentDidMount(){
@@ -53,6 +61,11 @@ class Teamview extends React.Component {
         
       }
 
+      logout() {
+        localStorage.removeItem('pausework-token');
+        this.props.history.push('/');
+        
+      }
 
     render () {
         
@@ -86,8 +99,10 @@ class Teamview extends React.Component {
                 <Link className="nav-link navChild setFontColor" to="/dashboard">Dashboard</Link>
               </li>
               <li id="idSign" className="nav-item">
-                <Link className="nav-link navChild setFontColor" to="/">Signout</Link>
-              </li>
+                    <Link className="nav-link navChild setFontColor" onClick={this.logout} 
+                    to="/">Signout</Link>
+                    {/* <a className="nav-link navChild setFontColor" onClick={this.logout} >Signout</a> */}
+                </li>
             </ul>
               
             </form>
