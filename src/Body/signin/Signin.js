@@ -47,6 +47,10 @@ class Signin extends React.Component{
           }
         };
 
+        if(localStorage.getItem('pausework-token')){
+          this.props.history.push('/dashboard');
+      }
+      
         this.submitForm = this.submitForm.bind(this);
       }
     
@@ -109,7 +113,7 @@ class Signin extends React.Component{
           setTimeout(() =>{
             this.props.history.push('/dashboard');
           },4000);
-          swal("Login Successful!", "You clicked the button!", "success");
+          swal("Login Successful!", "You clicked the button!", "success","close");
           
         } catch (err) {
           var loginChecker = document.getElementById("errorLogin");
@@ -117,7 +121,7 @@ class Signin extends React.Component{
             loginChecker.style.display ="block";
             document.getElementById("errorContent").innerText=err.response.data['message'];
           },4000);
-          swal("Invalid login details!", "", "error");
+          swal("Invalid login details!", "", "error","close");
           
         }
       }

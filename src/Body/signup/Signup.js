@@ -89,6 +89,10 @@ class Signup extends React.Component{
             gender:""
           }
         };
+
+        if(localStorage.getItem('pausework-token')){
+          this.props.history.push('/dashboard');
+      }
       }
     
       

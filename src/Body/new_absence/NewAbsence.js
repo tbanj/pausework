@@ -1,6 +1,9 @@
 import React from 'react';
 
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import env from '../../env';
+
 
 var employeeIdError = "invalid employee Id ";
 var firstError = "invalid first name";
@@ -185,6 +188,32 @@ class NewAbsence extends React.Component {
         console.log(diff)
     }
 
+    leaveSubmit = async () => {
+      try {
+        const body = {
+          "employee_id": this.state.employee_id,
+          "first_name": this.state.firstName,
+          "last_name": this.state.lastName,
+          "age": parseFloat(this.state.age),
+          "gender": this.state.gender,
+          "country": this.state.country,
+          "timezone": this.state.timezone,
+          "email": this.state.email,
+          "password": this.state.password
+        }
+        const res = await axios.post(`${env.api}/employee`, body);
+        console.log(res.data);
+        
+        const token = res.data.data.token;
+  
+        localStorage.setItem('pausework-token', token);
+  
+        this.props.history.push('/dashboard');
+      } catch (err) {
+        console.log('An error occured', err.response);
+      }
+    }
+
     logout() {
       localStorage.removeItem('pausework-token');
       this.props.history.push('/');
@@ -360,6 +389,11 @@ class NewAbsence extends React.Component {
                                
                                {formValid(this.state) && this.state.timeDuration !== '0 Day' && this.state.reasonforLeave !== "Choose Leave Type"? <Link to="/dashboard">
                     <button style={{height: '35px'}} className="btn btn-primary" onClick={() =>{
+                      // this.leaveSubmit() ;
+                         const extractId = localStorage.getItem('pausework-token').split(".");
+                         var dd = atob(extractId[1]);
+                         console.log(JSON.parse(dd));
+                         
                         console.log(`
            
                         First Name: ${this.state.firstName}
