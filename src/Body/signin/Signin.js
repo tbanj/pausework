@@ -1,8 +1,10 @@
 import React from 'react';
 import './signin.scss';
 import { Link } from 'react-router-dom';
+import swal from 'sweetalert';
 import axios from 'axios';
 import env from '../../env';
+
 
 
 
@@ -56,7 +58,7 @@ class Signin extends React.Component{
         
           
         } else {
-          console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+          // console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
         }
       };
     
@@ -104,14 +106,19 @@ class Signin extends React.Component{
           const token = res.data.data.token;
     
           localStorage.setItem('pausework-token', token);
-    
-          this.props.history.push('/dashboard');
+          setTimeout(() =>{
+            this.props.history.push('/dashboard');
+          },4000);
+          swal("Login Successful!", "You clicked the button!", "success");
+          
         } catch (err) {
           var loginChecker = document.getElementById("errorLogin");
-          loginChecker.style.display ="block";
+          setTimeout(() =>{
+            loginChecker.style.display ="block";
+            document.getElementById("errorContent").innerText=err.response.data['message'];
+          },4000);
+          swal("Invalid login details!", "", "error");
           
-          document.getElementById("errorContent").innerText=err.response.data['message'];
-          // console.log('An error occured', err.response);
         }
       }
 
@@ -216,7 +223,6 @@ class Signin extends React.Component{
                                     
                                     if(this.state.password === null) {
                                       this.setState({errorPassword: true});
-                                      console.log('error passs');
                                       
                                     }
                                   }
