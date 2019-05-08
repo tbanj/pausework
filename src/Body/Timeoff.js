@@ -7,6 +7,13 @@ import { Link } from 'react-router-dom';
 
 class Timeoff extends React.Component {
 
+    constructor(props) {
+      super(props);
+      
+      if(localStorage.getItem('pausework-token')){
+        this.props.history.push('/dashboard');
+    }
+    }
     render () {
         return (
             <div  >

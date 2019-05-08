@@ -1,17 +1,19 @@
 import React from 'react';
 import './dashboard.scss';
-
+import axios from 'axios';
+import env from '../../env';
 import InfiniteCalendar from 'react-infinite-calendar';
 import 'react-infinite-calendar/styles.css'; // only needs to be imported once
 import { Link } from 'react-router-dom';
 
+
 // Render the Calendar
 var today = new Date();
-
-// var userCantSlect =new Date() -1;
-
-
 var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+
+
+var totalLeave;
+var dateAccepted =[];
  
 var totalAbsenceSubmitted = [
     // type, stopDate, approvalBy, status
@@ -24,94 +26,97 @@ var totalAbsenceSubmitted = [
 ]
 
 
-var absenceSummary = [
-    // type, stopDate, approvalBy, status
-    {type: 'sick', daysOff:2, startDate: '01/12/2018', stopDate: '01/18/2018', approvalBy: 'Chidima Newton',status: 'Approved', btnColor: 'btn btn-primary'},
-    {type: 'Maternity Leave', daysOff: 30, startDate: '01/12/2018',  stopDate: '09/01/2017', approvalBy: 'Chidima Newton',status: 'Approved', btnColor: 'btn btn-primary'},
-    {type: 'Annual Leave', daysOff: 20, sstartDate: '01/12/2018', stopDate: '06/01/2018', approvalBy: 'Chidima Newton',status: 'Approved', btnColor: 'btn btn-primary'}
-]
-
-// var dateToshowstart =new Date(2019, 1, 28);
-// var dateToshowend =new Date(2019, 1, 28);
-
-// var dateToshowstart1 =new Date(2019, 2, 31);
-// var dateToshowend1 =new Date(2019, 2, 31);
-
-// var dateToshowstart2 =new Date(2019, 3, 31);
-// var dateToshowend2 =new Date(2019, 3, 31);
-
-// var dateToshowstart3 =new Date(2019, 4, 31);
-// var dateToshowend3 =new Date(2019, 4, 31);
 
 var calendarDate = [
     new Date(2019 , 0, 31), new Date(2019, 1, 28), new Date(2019, 2, 31), new Date(2019, 3, 30),
 ]
-
 var MoreCalendarDate;
-
-// function displayGreetings () {
-//     console.log('welcome on board');
-// }
-// displayGreetings();
- 
-
 let listLeave= [
-    {reason: 'Time Off' , daysApprove: '3 days'},
-              {reason: 'Medical Checkup', daysApprove: 4},
-              {reason: 'Vacation', daysApprove: 10},
-              {reason: 'Time Off', daysApprove: 7}
+    {reason: 'Time Off' , daysApprove: '3 days'},{reason: 'Medical Checkup', 
+        daysApprove: 4},{reason: 'Vacation', daysApprove: 10},{reason: 'Time Off', daysApprove: 7}
 ]
 
 let pendingLeave = [
-    {reason: 'Time Off', daysLeft: 7},
-    {reason: 'Vacation', daysLeft: 14},
-    {reason: 'Medical Checkup', daysLeft: 4},
-    {reason: 'Sick Leave', daysLeft: 10}
+    {reason: 'Time Off', daysLeft: 7},{reason: 'Vacation', daysLeft: 14},
+    {reason: 'Medical Checkup', daysLeft: 4},{reason: 'Sick Leave', daysLeft: 10}
 ]
 
 let staffDetail = [
     {detail: 'Yearly Allocation', value:  '30 working Days'},
-    {detail: 'General Manager', value: 'Alabi'},
-    {detail: 'Department', value: 'I.T Department'},
-    
+    {detail: 'General Manager', value: 'Alabi'},{detail: 'Department', value: 'I.T Department'},
 ]
 
-// var hideSignin= document.getElementById("idSign");
-// hideSignin.style.display = "none";
 
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
     
         this.state = {
-          approveRequest: [
-              
-          ],
-          count: 0,
-          clickNotice: null,
-          showMore: false,
-          availableRequest: [],
-          staffInfo: [],
+            leaveSum: [],
+            markedDate: [],
+            dateCommence:[],
+            approveRequest: [
+                
+            ],
+            count: 0,
+            clickNotice: null,
+            showMore: false,
+            availableRequest: [],
+            staffInfo: [],
         };
 
         // mounting function
         this.logout = this.logout.bind(this);
 
-        if(!localStorage.getItem('pausework-token')){
+        if(!(localStorage.getItem('pausework-token') && localStorage.getItem('pausework-info'))){
             this.props.history.push('/');
         }
-        
-      }
 
-      componentDidMount(){
-        //   componentDidMount is the method that makes the data
-        // available once the page load
-        this.setState({approveRequest: listLeave });
-        this.setState({availableRequest: pendingLeave });
-        this.setState({staffInfo: staffDetail })
-       
+      }
+      coverDate(date) {
+        return new Date(date).toLocaleDateString();
         
-        // this.setState({showMore: displayGreetings })
+    }
+
+     async componentDidMount(){
+        //   componentDidMount is the method that makes the data available once the page load
+        this.setState({availableRequest: pendingLeave, staffInfo: staffDetail, approveRequest:  listLeave });
+       
+        debugger;
+      
+        const isAdmin = localStorage.getItem('pausework-info');
+        const token = localStorage.getItem('pausework-token');
+            const tokenSerialize = token.split(".");
+            const tokenConvert =JSON.parse(atob(tokenSerialize[1]));
+            // console.log(tokenConvert['id']);
+        try {
+            if (!(token && isAdmin)) {return this.props.history.push('/');}
+            const res = await axios.get(`${env.api}/leave/user?employee=${tokenConvert['id']}`, {
+                headers: {'Authorization': `Bearer ${token}`,  'Isadmin': `Bearer ${isAdmin}`}});
+            
+                // if(!localStorage.getItem('totalLeaves')) {totalLeave =[]; }
+            // totalLeave =localStorage.setItem('totalLeaves', res.data.data);
+            if(res.data === null)  {this.setState({leaveSum: [] }); return;}
+            
+            totalLeave = res.data.data;
+           
+            totalLeave.forEach(leave => {
+                if(leave.approvestatus > 1){ 
+                    var dateObj = new Date(leave.startdate);
+                    dateAccepted.push(dateObj);}
+                
+            });
+            // console.log(dateAccepted);
+            this.setState({leaveSum: res.data.data, dateCommence: dateAccepted });
+
+          } 
+          catch (err) {
+            if (localStorage.getItem('pausework-token') && localStorage.getItem('pausework-info'))
+              localStorage.removeItem('pausework-token');
+              localStorage.removeItem('pausework-info');
+      
+            this.props.history.push('/');
+          }
         
       }
       
@@ -120,8 +125,6 @@ class Dashboard extends React.Component {
         
         this.setState({showMore: !this.state.showMore });
         
-
-        console.log(changeCalender + this.state.count);
 
         MoreCalendarDate = [
             new Date(2019 , 0, 31), new Date(2019, 1, 28), new Date(2019, 2, 31), new Date(2019, 3, 30),
@@ -136,24 +139,17 @@ class Dashboard extends React.Component {
         
         }
 
-        
-        
-        
         MoreCalendarDate.splice(0,rem.length);
-        // console.log(MoreCalendarDate);
-        // this.setState({showMore: MoreCalendarDate })
-         console.log(MoreCalendarDate);
          
       }
 
       filterCalender(value) {
-        MoreCalendarDate.filter((e) =>{
-            return e === value;
-        });
+        MoreCalendarDate.filter((e) =>{ return e === value;});
     }
 
       logout() {
         localStorage.removeItem('pausework-token');
+        localStorage.removeItem('pausework-info');
         this.props.history.push('/');
         
       }
@@ -164,6 +160,9 @@ class Dashboard extends React.Component {
         const {approveRequest} = this.state;
         const {availableRequest} = this.state;
         const {staffInfo} = this.state;
+        const {leaveSum} = this.state;
+        const {dateCommence} =this.state;
+        
         
         return (
             <div>
@@ -197,7 +196,6 @@ class Dashboard extends React.Component {
                 <li id="idSign" className="nav-item">
                     <Link className="nav-link navChild setFontColor" onClick={this.logout} 
                     to="/">Signout</Link>
-                    {/* <a className="nav-link navChild setFontColor" onClick={this.logout} >Signout</a> */}
                 </li>
                 </ul>
                 
@@ -206,8 +204,6 @@ class Dashboard extends React.Component {
         </nav>
           </div>
 
-
-                {/* body div */}
                 <div style={{marginTop: '100px', marginLeft: '3%'}}>
                 <div className="container-fluid">
                         <div>
@@ -216,20 +212,12 @@ class Dashboard extends React.Component {
                         <div>
                             <p className="subTitleOne" >Statistics</p>
                                 <div className="row" style={{marginLeft: '5%'}}>
-                                    {/* <div className="col-3">
-                                        <p className="statTitle">Off Days Remaining</p>
-                                        <p className="statDayLeft">4</p>
-                                        <p>Out of 30 Leave Days Left</p>
-                                    </div> */}
                                     <div style={{marginBottom: '3%'}} className="col-md-3 col-sm-12">
                                         <div className="card">
-                                            <div className="statTitle card-header">
-                                            Off Days Remaining
-                                            </div>
+                                            <div className="statTitle card-header"></div>
                                             <div className="card-body">
                                                 <h5 className="statDayLeft card-title">4</h5>
                                                 <p className="card-text">Out of 30 Leave Days Left</p>
-                                                {/* <a href="#" className="btn btn-primary">Go somewhere</a> */}
                                             </div>
                                         </div>
                                     </div>
@@ -252,7 +240,6 @@ class Dashboard extends React.Component {
                                                     })
                                                 }
                                                 
-                                                {/* <a href="#" className="btn btn-primary">Go somewhere</a> */}
                                             </div>
                                         </div>
                                     </div>
@@ -275,8 +262,7 @@ class Dashboard extends React.Component {
                                                         </div>
                                                     })
                                                 }
-                                                
-                                                {/* <a href="#" className="btn btn-primary">Go somewhere</a> */}
+
                                             </div>
                                         </div>
                                     </div>
@@ -318,7 +304,7 @@ class Dashboard extends React.Component {
                             <div className="row" style={{marginLeft: '5%', marginBottom: '15%'}}>
                                     
                                     {/*  col 1 calender*/}
-                                {!this.state.showMore ? calendarDate.map((data,index)=> {
+                                {!this.state.showMore ? dateCommence.map((data,index)=> {
                                    
                                     
                                     return (<div key={index}>
@@ -326,7 +312,7 @@ class Dashboard extends React.Component {
                                         <InfiniteCalendar
                                             width={300}
                                             height={400}
-                                            selected={today}
+                                            selected={data}
                                             disabledDays={[0,6]}
                                             minDate={lastWeek}
                                             min = {data}
@@ -341,22 +327,19 @@ class Dashboard extends React.Component {
                                     </div> 
                                     </div>)
                                 }
-                                ): MoreCalendarDate.map((data,index)=> {
-                                    // console.log(this.state.showMore);
-                                    
+                                ):
+                                 MoreCalendarDate.map((data,index)=> {
                                     return (<div key={index}>
                                         <div className="col-md-3">
                                         <InfiniteCalendar
                                             width={300}
                                             height={400}
-                                            selected={today}
-                                            // maxDate = {userMaxSelect}
+                                            selected={[data]}
                                             disabledDays={[0,6]}
                                             minDate={lastWeek}
                                             min = {data}
                                             max= {data}
                                             displayOptions={{
-                                                // layout: 'landscape',
                                                 showHeader: false,
                                                 todayHelperRowOffset:1
                                               }}
@@ -365,60 +348,70 @@ class Dashboard extends React.Component {
                                     </div> 
                                     </div>)
                                 }
-                                )}
-
-                                   
-
+                                )
+                                }
                                     
                             </div>
                         </div>
 
-
                         <p style={{marginTop: '10%'}} className="subTitleOne">Summary of Submitted Forms</p>
                         <div className="row mb-5 py-3">
-                        <div className="col-12">
-                        <table className="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Request Days</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                          
-                          {/* {type: 'sick', daysRequested:6, startDate: '01/12/2018',
-                          stopDate: '01/18/2018', status: 'Approved', btnColor: 'btn btn-warning'},
-     */}
-                                {
-                                    totalAbsenceSubmitted.map((item, index) => {
-                                        return <tr key={index}>
-                                        <td>{item.type}</td>
-                                        <td>{item.daysRequested}</td>
-                                        <td>From: {item.startDate} To: {item.stopDate}</td>
-                                        <td><button className={item.btnColor}>{item.status}</button></td>
-                                        
-                                    </tr>
-                                    })
-                                }
-                   
-                            </tbody>
-                        </table>
-                        </div>
+                            <div className="col-12">
+                                <table id="submittedFormTable" className="table table-hover display">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Request Days</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            
+                                            leaveSum.length > 0 ? leaveSum.map((item, index) => {
+                                                var btnColor="";
+                                                var statusMessage="";
+                                                if(item.approvestatus <2 ) {
+                                                    if(item.approvestatus ===0) { btnColor="btn btn-warning"; statusMessage="Pending";
+                                                }
+                                                else if(item.approvestatus ===1) {btnColor="btn btn-danger"; statusMessage="Rejected"}
+                                                return <tr key={index}>
+                                                    <td>{item.leavetype}</td>
+                                                    <td>{item.offdays}</td>
+                                                    <td>{this.coverDate(item.startdate)} </td>
+                                                    <td>{ this.coverDate(item.enddate)}</td>
+                                                    <td><button className={btnColor}>{statusMessage}</button></td>
+                                                
+                                                </tr> 
+                                                }
+                                                
+                                            }):  
+                                            <tr>
+                                                <td>{"N/A"}</td>
+                                                <td>{"N/A"}</td>
+                                                <td>{"N/A"}</td>
+                                                <td>{"N/A"}</td>
+                                                <td><button className={"btn btn-info"}>{"N/A"}</button></td>
+                                            </tr>
+                                        }
+                        
+                                    </tbody>
+                                </table>
+                            </div>
                     </div>
-
-
 
                         <p style={{marginTop: '10%'}} className="subTitleOne">All Absence</p>
                         <div className="row mb-5 py-3">
                         <div className="col-12">
-                        <table className="table table-hover">
+                        <table id="acceptedTable" className="table table-hover display">
                             <thead>
                             <tr>
                                 <th>Type</th>
                                 <th>Number Of Days</th>
-                                <th>Date</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
                                 <th>Approved By</th>
                                 <th>Status</th>
                             </tr>
@@ -426,16 +419,32 @@ class Dashboard extends React.Component {
                             <tbody>
                           
                                 {
-                                    absenceSummary.map((item, index) => {
-                                        return <tr key={index}>
-                                        <td>{item.type}</td>
-                                        <td>{item.daysOff}</td>
-                                        <td>From: {item.startDate} To: {item.stopDate}</td>
-                                        <td>{item.approvalBy}</td>
-                                        <td><button className={item.btnColor}>{item.status}</button></td>
+                                    leaveSum.length >0 ? leaveSum.map((item, index) => {
+                                        var btnColor="";
+                                        var statusMessage="";
+                                        
+                                        if(item.approvestatus > 1 ) {
+                                            btnColor="btn btn-success"; statusMessage="Accepted";
+                                            return <tr key={index}>
+                                            <td>{item.leavetype}</td>
+                                            <td>{item.offdays }</td>
+                                            <td>{this.coverDate(item.startdate)}</td>
+                                            <td>{this.coverDate(item.enddate)}</td>
+                                            <td>{item.approvedby}</td>
+                                            <td><button className={btnColor}>{statusMessage}</button></td>
                                         
                                     </tr>
-                                    })
+                                            }
+                                        
+                                    }): <tr >
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td><button className={"btn btn-info"}>{"N/A"}</button></td>
+                                    </tr>
                                 }
                    
                             </tbody>

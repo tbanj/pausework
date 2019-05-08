@@ -47,7 +47,7 @@ class Signin extends React.Component{
           }
         };
 
-        if(localStorage.getItem('pausework-token')){
+        if(localStorage.getItem('pausework-token') && localStorage.getItem('pausework-info')){
           this.props.history.push('/dashboard');
       }
       
@@ -108,20 +108,27 @@ class Signin extends React.Component{
           const res = await axios.post(`${env.api}/employee/signin`, body);
     
           const token = res.data.data.token;
+
+          const info = res.data.data.result;
     
+          localStorage.setItem('pausework-info', info.isadmin);
+
           localStorage.setItem('pausework-token', token);
           setTimeout(() =>{
             this.props.history.push('/dashboard');
           },4000);
-          swal("Login Successful!", "You clicked the button!", "success","close");
+          swal("Login Successful!", "You clicked the button!", "success");
           
         } catch (err) {
           var loginChecker = document.getElementById("errorLogin");
           setTimeout(() =>{
-            loginChecker.style.display ="block";
-            document.getElementById("errorContent").innerText=err.response.data['message'];
+            
+            if(err.response !== undefined) {
+              loginChecker.style.display ="block";
+              document.getElementById("errorContent").innerText=err.response.data['message'];
+            }
           },4000);
-          swal("Invalid login details!", "", "error","close");
+          swal("Invalid login details!", "", "error");
           
         }
       }

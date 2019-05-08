@@ -63,6 +63,7 @@ class Teamview extends React.Component {
 
       logout() {
         localStorage.removeItem('pausework-token');
+        localStorage.removeItem('pausework-info');
         this.props.history.push('/');
         
       }

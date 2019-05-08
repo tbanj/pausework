@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import swal from 'sweetalert';
 
 import axios from 'axios';
 import env from '../../env';
@@ -64,6 +64,7 @@ class Signup extends React.Component{
           timezone: 'Select Timezone',
           country: 'Select Country',
           age: null,
+          serverError:'',
           gender: 'Select Gender',
 
           errorFirst: false,
@@ -90,9 +91,10 @@ class Signup extends React.Component{
           }
         };
 
-        if(localStorage.getItem('pausework-token')){
-          this.props.history.push('/dashboard');
-      }
+      //   if(localStorage.getItem('pausework-token')){
+      //     this.props.history.push('/dashboard');
+      // }
+      this.successSubmit =this.successSubmit.bind(this);
       }
     
       
@@ -212,18 +214,38 @@ class Signup extends React.Component{
             "country": this.state.country,
             "timezone": this.state.timezone,
             "email": this.state.email,
+            "isadmin": false,
             "password": this.state.password
           }
-          const res = await axios.post(`${env.api}/employee`, body);
+          const res = await axios.post(`${env.api}/employee`, body,
+          );
           console.log(res.data);
           
           const token = res.data.data.token;
+  
+          const info = res.data.data.employee.isadmin;
     
           localStorage.setItem('pausework-token', token);
-    
+          localStorage.setItem('pausework-info', info);
           this.props.history.push('/dashboard');
+          // setTimeout(() =>{
+          //   this.props.history.push('/dashboard');
+          // },4000);
+          // swal({
+          //   title: "Good job!",
+          //   text: "You clicked the button!",
+          //   icon: "success",
+          //   button: "close",
+          // });
+          
+          
+          
         } catch (err) {
           console.log('An error occured', err.response);
+          this.setState({serverError: 'the email address already exist'});
+          console.log(this.state.serverError);
+          this.props.history.push('/');
+          
         }
       }
 
@@ -330,6 +352,7 @@ class Signup extends React.Component{
                    <div className="col-6 col-md-6">
                          <form className="container mb-5" onSubmit={this.handleSubmit} noValidate style={{padding: '2% 20%'}}>
                     <div className="">
+                    <p className="text-danger">{this.state.serverError}</p>
                     <div id="parentEmployeeId" className="form-group">
                     <label >Employee Identification Number</label>
                     <input type="text" className="form-control"  placeholder="Employee Identification Number" 
@@ -415,9 +438,9 @@ class Signup extends React.Component{
                                 <select className="form-control" onChange={this.handleChange} id="idgender">
                                 <option >Select Gender</option>
                                 {
-                        genderList.map((item, i) => {
+                        genderList.map((item, ind) => {
                           
-                            return <option key={i}>{item.name}</option>
+                            return <option key={ind}>{item.name}</option>
                         })
                     }
                                 </select>
@@ -458,9 +481,9 @@ class Signup extends React.Component{
                                 <select className="form-control" onChange={this.handleChange} id="idtimezone">
                                 <option >Select Timezone</option>
                                 {
-                        timezoneList.map((item, i) => {
+                        timezoneList.map((item, ine) => {
                           
-                            return <option key={i}>{item.name}</option>
+                            return <option key={ine}>{item.name}</option>
                         })
                     }
                                 </select>
