@@ -1,16 +1,10 @@
 import React from 'react';
-import './dashboard.scss';
-import axios from 'axios';
-import Table from './../../table/component/Movies'
-// import './css/jquery.datatables.css';
-import env from '../../env';
-import InfiniteCalendar from 'react-infinite-calendar';
-
-
-
-import 'react-infinite-calendar/styles.css'; // only needs to be imported once
 import { Link } from 'react-router-dom';
-import Movies from './../../table/component/Movies';
+import InfiniteCalendar from 'react-infinite-calendar';
+import axios from 'axios';
+import env from '../../env';
+import 'react-infinite-calendar/styles.css'; // only needs to be imported once
+import './dashboard.scss';
 
 
 
@@ -47,7 +41,7 @@ let staffDetail = [
 ]
 
 
-class Dashboard extends React.Component {
+class DashboardAdmin extends React.Component {
     constructor(props) {
         super(props);
     
@@ -68,7 +62,7 @@ class Dashboard extends React.Component {
         // mounting function
         this.logout = this.logout.bind(this);
 
-        if(!(localStorage.getItem('pausework-token') && localStorage.getItem('pausework-info'))){
+        if(!(localStorage.getItem('pausework-token') && localStorage.getItem('pausework-info') && localStorage.getItem('pausework-adminKey'))){
             this.props.history.push('/');
         }
 
@@ -83,7 +77,7 @@ class Dashboard extends React.Component {
         this.setState({availableRequest: pendingLeave, staffInfo: staffDetail, approveRequest:  listLeave });
        
         
-      
+        const adminKey = localStorage.getItem('pausework-admin');
         const isAdmin = localStorage.getItem('pausework-info');
         const token = localStorage.getItem('pausework-token');
             const tokenSerialize = token.split(".");
@@ -91,7 +85,7 @@ class Dashboard extends React.Component {
             // console.log(tokenConvert['id']);
         try {
             if (!(token && isAdmin)) {return this.props.history.push('/');}
-            const res = await axios.get(`${env.api}/leave/user?employee=${tokenConvert['id']}`, {
+            const res = await axios.get(`${env.api}/leave/?employee=${tokenConvert['id']}&admin_key=${adminKey}`, {
                 headers: {'Authorization': `Bearer ${token}`,  'Isadmin': `Bearer ${isAdmin}`}});
             
                 // if(!localStorage.getItem('totalLeaves')) {totalLeave =[]; }
@@ -121,7 +115,7 @@ class Dashboard extends React.Component {
       }
       
       checkCklick() {
-        // var changeCalender = 0;
+        var changeCalender = 0;
         
         this.setState({showMore: !this.state.showMore });
         
@@ -356,7 +350,7 @@ class Dashboard extends React.Component {
                             </div>
                         </div>
 
-                        <p style={{marginTop: '10%'}} className="subTitleOne">Summary of Submitted Leave Request</p>
+                        <p style={{marginTop: '10%'}} className="subTitleOne">Summary of Submitted Forms</p>
                         <div className="row mb-5 py-3">
                             <div className="col-12">
                                 <table id="submittedFormTable" className="table table-hover display">
@@ -391,7 +385,11 @@ class Dashboard extends React.Component {
                                                 
                                             }):  
                                             <tr>
-                                                <td colSpan="5">{"N/A"}</td> 
+                                                <td>{"N/A"}</td>
+                                                <td>{"N/A"}</td>
+                                                <td>{"N/A"}</td>
+                                                <td>{"N/A"}</td>
+                                                <td><button className={"btn btn-info"}>{"N/A"}</button></td>
                                             </tr>
                                         }
                         
@@ -421,7 +419,7 @@ class Dashboard extends React.Component {
                                         var btnColor="";
                                         var statusMessage="";
                                         
-                                        if(item.approvestatus === 2 ) {
+                                        if(item.approvestatus > 1 ) {
                                             btnColor="btn btn-success"; statusMessage="Accepted";
                                             return <tr key={index}>
                                             <td>{item.leavetype}</td>
@@ -435,7 +433,13 @@ class Dashboard extends React.Component {
                                             }
                                         
                                     }): <tr >
-                                            <td colSpan="6">{"No data available yet for days you are not at work"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td>{"N/A"}</td>
+                                            <td><button className={"btn btn-info"}>{"N/A"}</button></td>
                                     </tr>
                                 }
                    
@@ -445,9 +449,6 @@ class Dashboard extends React.Component {
                     </div>
 
 
-                {/* no table imported  */}
-                <p style={{marginTop: '10%'}} className="subTitleOne">All Absence</p>
-                <Movies/>
                 </div>
 
             </div>
@@ -460,5 +461,5 @@ class Dashboard extends React.Component {
 }
 
 
-export default Dashboard;
+export default DashboardAdmin;
 

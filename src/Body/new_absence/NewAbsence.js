@@ -123,9 +123,7 @@ class NewAbsence extends React.Component {
         let formErrors = { ...this.state.formErrors };
     
         switch (name) {
-        
           
-
             case "reasonforLeave":
           formErrors.reasonforLeave =
           this.state.reasonforLeave === "Choose Leave Type" ? leavePurposeError  : "";

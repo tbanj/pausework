@@ -1,6 +1,5 @@
 // @import "./../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
-
 body {
   margin: 0;
   padding: 0;
@@ -14,4 +13,8 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.clickable {
+  cursor: pointer;
 }
