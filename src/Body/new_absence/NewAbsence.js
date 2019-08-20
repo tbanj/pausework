@@ -205,7 +205,7 @@ class NewAbsence extends React.Component {
             <div>
                  {/* header div nav */}
             <div className="row navBackground fixed-top">
-              <nav className="navbar navbar-expand-lg   navbar-light bg-light col-md-9 offset-md-1">
+              <nav className="navbar navbar-expand-lg   navbar-light col-md-9 offset-md-1">
                    <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
                 <button style={{border: '2px solid white'}} className="navbar-toggler" type="button" data-toggle="collapse"
                   data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01"

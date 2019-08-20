@@ -1,48 +1,53 @@
 import React, { Component } from "react";
-
-import Like from "./like";
+import ReactTooltip from 'react-tooltip';
 import Table from "./table";
 
-const x = <h1>ade</h1>; // react element
+// const x = <h1>ade</h1>; // react element
 
 class MoviesTable extends Component {
-  columns = [
-    { path: "title", label: "Title" },
-    { path: "genre.name", label: "Genre" },
-    { path: "numberInStock", label: "Stock" },
-    { path: "dailyRentalRate", label: "Rate" },
+
+  columns =
+    [...this.props.requiredColumns,
+
     {
-      key: "Like",
+      path: `${this.props.approvestatus}`, label: `${this.props.approveState}`,
       content: movie => (
-        <Like onClick={() => this.props.onLike(movie)} liked={movie.liked} />
+        <button data-tip={`delete this item`} type="button"
+          className={movie.btnColor}
+          disabled
+        >{this.props.buttonName} <span > <i className="fa fa-trash"></i></span>
+          <ReactTooltip />
+          {movie.statusMessage}
+        </button>
       )
     },
     {
       key: "Delete",
       content: movie => (
-        <button
-          type="button"
-          className="btn waves-effect waves-light btn-rounded btn-outline-danger"
+        <button data-tip={`delete this item`} type="button"
+          className=" btn waves-effect waves-light btn-rounded btn-outline-danger"
           onClick={() => this.props.onDelete(movie._id)}
-        >
-          Delete
+        >Delete <span > <i className="fa fa-trash"></i></span>
+          <ReactTooltip />
         </button>
       )
     }
-  ];
+    ];
+  columnsModified = this.props.removeColumn ? this.columns.slice(this.props.removeColumn[0], this.props.removeColumn[1]) : this.columns
 
   render() {
-    const { movies, onSort, sortColumn } = this.props;
-    console.log(this.props.onLike);
+    const { leaves, onSort, sortColumn } = this.props;
+    console.log('spread', this.columnsModified);
 
     return (
       <Table
-        columns={this.columns}
-        data={movies}
+        columns={this.columnsModified}
+        data={leaves}
         sortColumn={sortColumn}
         onSort={onSort}
       />
     );
+
   }
 }
 

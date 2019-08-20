@@ -200,7 +200,6 @@ class Signup extends React.Component {
     // u can add callback to the function below to see how the value is being set
     this.setState({ formErrors, [name]: value }
     );
-    // console.log(this.state)
 
   };
 
@@ -231,15 +230,6 @@ class Signup extends React.Component {
       localStorage.setItem('pausework-token', token);
       localStorage.setItem('pausework-info', info);
       this.props.history.push('/dashboard');
-      // setTimeout(() =>{
-      //   this.props.history.push('/dashboard');
-      // },4000);
-      // swal({
-      //   title: "Good job!",
-      //   text: "You clicked the button!",
-      //   icon: "success",
-      //   button: "close",
-      // });
 
 
 
@@ -248,7 +238,7 @@ class Signup extends React.Component {
       this.setState({ serverError: 'the email address already exist' });
       this.setState({ submitLoader: '' });
       console.log(this.state.serverError);
-      // this.props.history.push('/');
+      this.setState({ submitLoader: "" });
 
     }
   }
@@ -311,7 +301,7 @@ class Signup extends React.Component {
       <div className="fluid-container">
         {/* header div nav */}
         <div className="row navBackground fixed-top">
-          <nav className="navbar navbar-expand-lg  navbar-light bg-light col-md-9 offset-md-1">
+          <nav className="navbar navbar-expand-lg  navbar-light col-md-9 offset-md-1">
             <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
             <button style={{ border: '2px solid white' }} className="navbar-toggler" type="button" data-toggle="collapse"
               data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01"
@@ -505,7 +495,7 @@ class Signup extends React.Component {
 
                   {formValid(this.state) ?
                     <button type="submit"
-                      onClick={this.successSubmit} className="btn btn-primary">Submit Form Now <span role="img" aria-label="Rocket">🚀</span><i className={this.state.submitLoader}></i></button>
+                      onClick={this.successSubmit} className="btn btn-primary">Submit Form Now <span role="img" aria-label="Rocket">🚀</span><i className={submitLoader}></i></button>
 
                     : <button type="submit" className="btn btn-primary"
                       onClick={this.checkSubmitError}

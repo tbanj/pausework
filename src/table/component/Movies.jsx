@@ -18,8 +18,9 @@ class Movies extends Component {
     currentPage: 1,
     genres: [],
     selectedGenre: "",
-    sortColumn: { path: "title", order: "asc" }
+    sortColumn: this.props.tableSort,
   };
+
 
   componentWillMount() {
     if (getItem.getItemsFromStorage().length === 0) {
@@ -42,22 +43,13 @@ class Movies extends Component {
 
   handleDelete = id => {
     getItem.deleteItemFromStorage(id);
-    console.log(this.state.movies);
     movieListA = getItem.getItemsFromStorage();
-    console.log(movieListA);
     this.setState({ movies: movieListA });
   };
 
-  handleLike = movie => {
-    const movies = [...this.state.movies];
-    const index = movies.indexOf(movie);
-    movies[index] = { ...movies[index] };
-    movies[index].liked = !movies[index].liked;
-    this.setState({ movies });
-  };
+
 
   handleGenreSelected = genre => {
-    console.log(genre);
     this.setState({ selectedGenre: genre, currentPage: 1 });
   };
 
@@ -67,7 +59,6 @@ class Movies extends Component {
 
   // use to sort ascending & descending order
   handleSort = sortColumn => {
-    console.log(sortColumn);
 
     this.setState({ sortColumn: sortColumn });
   };
@@ -79,48 +70,57 @@ class Movies extends Component {
       movies: AllMovies,
       selectedGenre,
       genres,
-      sortColumn
+      sortColumn,
     } = this.state;
+    const { leaveSum, requiredColumns, dataError, removeColumn,
+      buttonName, approvestatus, approveState } = this.props;
+    console.log('wahab ', typeof requiredColumns, requiredColumns);
 
-    const filtered =
-      selectedGenre && selectedGenre._id
-        ? AllMovies.filter(m => m.genre._id === selectedGenre._id)
-        : AllMovies;
+    // const filtered =
+    //   selectedGenre && selectedGenre._id
+    //     ? AllMovies.filter(m => m.genre._id === selectedGenre._id)
+    //     : AllMovies;
 
+    const filtered = leaveSum;
     // sorting
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
     // array to populate data to users
-    const movies = paginate(sorted, currentPage, pageSize);
+    const leaves = paginate(sorted, currentPage, pageSize);
 
     return (
       <div>
         <div className="container-fluid">
-          {AllMovies.length > 0 ? (
+          {leaves.length > 0 ? (
             <React.Fragment>
               <div className="row my-4">
                 <div className="col">
-                  <h3>Showing movies {filtered.length} in the database</h3>
                   <MoviesTable
-                    movies={movies}
+                    leaves={leaves}
                     sortColumn={sortColumn}
                     onDelete={this.handleDelete}
-                    onLike={this.handleLike}
                     onSort={this.handleSort}
+                    requiredColumns={requiredColumns}
+                    removeColumn={removeColumn}
+                    buttonName={buttonName}
+                    approvestatus={approvestatus}
+                    approveState={approveState}
                   />
                 </div>
               </div>
             </React.Fragment>
           ) : (
-            <h3>No movies in the database</h3>
-          )}
+              <h3>{dataError ? "No leave record found" : "please wait "} <span><i className={dataError ? "" : `spinner-border text-primary`}></i></span></h3>
+            )}
         </div>
         <Pagination
           onPageChange={this.handlePageChange}
           itemsCount={filtered.length}
           pageSize={pageSize}
           currentPage={currentPage}
+          requiredColumns={requiredColumns}
         />
+
       </div>
     );
   }

@@ -100,8 +100,7 @@ class Signin extends React.Component {
   };
 
   async submitForm() {
-    let submitLoader = "spinner-border text-light";
-    this.setState({ submitLoader });
+
 
     try {
 
@@ -109,6 +108,8 @@ class Signin extends React.Component {
         "email": this.state.email,
         "password": this.state.password
       }
+      let submitLoader = "spinner-border text-light";
+      this.setState({ submitLoader });
 
       const res = await axios.post(`${env.api}/employee/signin`, body);
 
@@ -138,7 +139,7 @@ class Signin extends React.Component {
         }
       }, 4000);
       swal("Invalid login details!", "", "error");
-
+      this.setState({ submitLoader: "" });
     }
   }
 
@@ -153,7 +154,7 @@ class Signin extends React.Component {
       <div>
         {/* header div nav */}
         <div className="row navBackground fixed-top">
-          <nav className="navbar navbar-expand-lg  navbar-light bg-light col-md-9 offset-md-1">
+          <nav className="navbar navbar-expand-lg  navbar-light col-md-9 offset-md-1">
             <Link className="nav-link parentChild setFontColor" to="/">PauseWork</Link>
             <button style={{ border: '2px solid white' }} className="navbar-toggler" type="button" data-toggle="collapse"
               data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01"
