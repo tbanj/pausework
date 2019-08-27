@@ -214,7 +214,7 @@ class SignupAdmin extends React.Component {
         "country": this.state.country,
         "timezone": this.state.timezone,
         "email": this.state.email,
-        "isadmin": true,
+        "is_admin": true,
         "password": this.state.password
       }
       const res = await axios.post(`${env.api}/employee/admin`, body,
@@ -223,7 +223,7 @@ class SignupAdmin extends React.Component {
 
       const token = res.data.data.token;
       const adminKey = res.data.data.employee.admin_key;
-      const info = res.data.data.employee.isadmin;
+      const info = res.data.data.employee.is_admin;
 
       localStorage.setItem('pausework-token', token);
       localStorage.setItem('pausework-info', info);

@@ -61,10 +61,6 @@ class Teamview extends React.Component {
     // available once the page load
     this.setState({ appUser: user });
     console.log(this.state.appUser.firstname);
-
-
-    // this.setState({showMore: displayGreetings })
-
   }
 
   logout() {

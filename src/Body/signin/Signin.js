@@ -117,7 +117,7 @@ class Signin extends React.Component {
 
       const info = res.data.data.result;
 
-      localStorage.setItem('pausework-info', info.isadmin);
+      localStorage.setItem('pausework-info', info.is_admin);
 
       localStorage.setItem('pausework-token', token);
       setTimeout(() => {

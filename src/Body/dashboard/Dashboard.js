@@ -2,8 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import InfiniteCalendar from 'react-infinite-calendar';
-import Table from './../../table/component/Movies'
-import Movies from './../../table/component/Movies';
+import { coverDate } from '../helper/helper.js';
+import { verifyUser } from '../services/authService.js';
+import ParentTable from './../../table/component/ParentTable';
 import env from '../../env';
 
 import 'react-infinite-calendar/styles.css'; // only needs to be imported once
@@ -16,25 +17,10 @@ import './dashboard.scss';
 var today = new Date();
 var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
 
-
-
-
-
 var calendarDate = [
     new Date(2019, 0, 31), new Date(2019, 1, 28), new Date(2019, 2, 31), new Date(2019, 3, 30),
 ]
 var MoreCalendarDate;
-let listLeave = [
-    { reason: 'Time Off', daysApprove: '3 days' }, {
-        reason: 'Medical Checkup',
-        daysApprove: 4
-    }, { reason: 'Vacation', daysApprove: 10 }, { reason: 'Time Off', daysApprove: 7 }
-]
-
-let pendingLeave = [
-    { reason: 'Time Off', daysLeft: 7 }, { reason: 'Vacation', daysLeft: 14 },
-    { reason: 'Medical Checkup', daysLeft: 4 }, { reason: 'Sick Leave', daysLeft: 10 }
-]
 
 let staffDetail = [
     { detail: 'Yearly Allocation', value: '30 working Days' },
@@ -43,124 +29,209 @@ let staffDetail = [
 
 
 class Dashboard extends React.Component {
+
+    signal = axios.CancelToken.source();
+
     constructor(props) {
         super(props);
 
         this.state = {
             leaveSum: [],
+            checkState: [],
             markedDate: [],
             dateCommence: [],
+            rejectedRequest: [],
             dataError: [],
+            summaryTableHeader: [],
+            daysLeft: "",
             tableSort: '',
+            pendingRejectedRequest: [],
             approveRequest: [],
             count: 0,
             clickNotice: null,
             showMore: false,
-            availableRequest: [],
             staffInfo: [],
         };
 
         // mounting function
         this.logout = this.logout.bind(this);
-
-        if (!(localStorage.getItem('pausework-token') && localStorage.getItem('pausework-info'))) {
+        let userInfo = verifyUser();
+        if (!(userInfo[1] && userInfo[0])) {
             this.props.history.push('/');
         }
 
     }
-    coverDate(date) {
-        return new Date(date).toLocaleDateString();
 
-    }
 
-    async componentDidMount() {
-        //   componentDidMount is the method that makes the data available once the page load
-        this.setState({ availableRequest: pendingLeave, staffInfo: staffDetail, approveRequest: listLeave });
-        const isAdmin = localStorage.getItem('pausework-info');
-        const token = localStorage.getItem('pausework-token');
-        const tokenSerialize = token.split(".");
-        const tokenConvert = JSON.parse(atob(tokenSerialize[1]));
 
+
+    getLeaveData = async () => {
+        let userInfo = verifyUser();
+        let totalLeave;
+        console.log(totalLeave, userInfo[0], userInfo[1]);
         try {
-            if (!(token && isAdmin)) { return this.props.history.push('/'); }
+
+            if (!(userInfo[1] && userInfo[0])) { return this.props.history.push('/'); }
             const res = await axios.get(`${env.api}/leave/user`, {
-                headers: { 'Authorization': `Bearer ${token}`, 'Isadmin': `Bearer ${isAdmin}` }
+                headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` },
+                cancelToken: this.signal.token,
             });
 
             if (res.data === null) { this.setState({ leaveSum: [] }); return; }
 
-            const totalLeave = res.data.data;
-            // console.log(totalLeave);
+            totalLeave = res.data.data;
+
+
             let dateAccepted = [];
             totalLeave.forEach(leave => {
-                if (leave.approvestatus > 1) {
-                    let dateObj = new Date(leave.startdate);
+                if (leave.approve_status > 1) {
+                    let dateObj = new Date(leave.start_date);
                     dateAccepted.push(dateObj);
                 }
 
             });
-            let acceptedLeave = [];
-            let notAccepted = [];
-            for (let index = 0; index < totalLeave.length; index++) {
-                let btnColor = "";
-                let statusMessage = "";
-                if (totalLeave[index]['approvedby'] !== "not approved yet") {
-                    const { data: adminStaff } = await axios.get(`${env.api}/employee/profile`, {
-                        headers: { 'Authorization': `Bearer ${token}`, 'Isadmin': `Bearer ${isAdmin}` }
 
-                    });
-                    console.log(adminStaff['data']['first_name'], totalLeave[index]);
-                    totalLeave[index]['approvedby'] = `${adminStaff['data']['first_name']} ${adminStaff['data']['last_name']}`
-                }
-
-                if (totalLeave[index]['approvestatus'] === 2) {
-                    btnColor = "btn btn-success";
-                    statusMessage = "Accepted"
-                    const formApproved = { ...totalLeave[index], btnColor: btnColor, statusMessage: statusMessage };
-                    acceptedLeave.push(formApproved);
-                    console.log('approved', acceptedLeave);
-                } else if (totalLeave[index]['approvestatus'] < 2) {
-
-                    if (totalLeave[index]['approvestatus'] === 0) {
-                        btnColor = "btn btn-warning";
-                        statusMessage = "Pending";
-                    }
-                    else if (totalLeave[index]['approvestatus'] === 1) {
-                        btnColor = "btn btn-danger";
-                        statusMessage = "Rejected"
-                    }
-                    // totalLeave[index]['approvedby'] === 'rejected';
-                    const notApproved = { ...totalLeave[index], btnColor: btnColor, statusMessage: statusMessage };
-                    notAccepted.push(notApproved);
-                    console.log('disapproved', notAccepted);
-                }
-
-            }
-            setTimeout(() => {
-                this.setState({ leaveSum: totalLeave, dateCommence: dateAccepted, approveRequest: acceptedLeave });
-            }, 2000);
-            console.log(this.state.approveRequest);
-
-            // setting data for your table
-            this.setState({ tableSort: { path: "leavetype", order: "asc" } });
-            const tableTotalAbsence = [
-                { path: "leavetype", label: "Type" },
-                { path: "offdays", label: "Number Of Days" },
-                { path: "startdate", label: "Start Date" },
-                { path: "enddate", label: "enddate" },
-                { path: "approvedby", label: "Approved By" },
-                { path: "approvestatus", label: "Status" },
-
-            ]
-            this.setState({ requiredColumns: tableTotalAbsence });
+            this.setState({ dateCommence: dateAccepted });
+            this.getLeaveTypes(userInfo, totalLeave);
+            return totalLeave;
         }
         catch (err) {
-            const dataError = "error encounter while fetching leave information";
-            const dataLoader = "spinner-border text-success";
+            let dataError;
+            let dataLoader;
+            if (axios.isCancel(err)) {
+                console.log('Error: ', err.message); // => prints: Api is being canceled
+                dataError = err.message;
+            } else {
+                dataError = "error encounter while fetching leave information";
+                dataLoader = "spinner-border text-success";
+
+            }
             this.setState({ dataError: [dataError, dataLoader] });
-            console.log(dataError[0], err);
+        }
+
+
+    }
+
+
+
+    getLeaveTypes = async (verifyUser, getLeaveData) => {
+        let userInfo = verifyUser;
+        let totalLeave = getLeaveData;
+        let acceptedLeave = [];
+        let notAccepted = [];
+        let rejectedRequest = [];
+
+        for (let index = 0; index < totalLeave.length; index++) {
+            let btnColor = "";
+            let statusMessage = "";
+            let statusIconType = "";
+            if (totalLeave[index]['approved_by'] !== "not approved yet") {
+                const { data: adminStaff } = await axios.get(`${env.api}/employee/profile`, {
+                    headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` },
+                    cancelToken: this.signal.token,
+                });
+                totalLeave[index]['approved_by'] = `${adminStaff['data']['first_name']} ${adminStaff['data']['last_name']}`
+            }
+
+            if (totalLeave[index]['approve_status'] === 2) {
+                btnColor = "btn btn-success";
+                statusMessage = "Accepted";
+                statusIconType = "fa-check";
+                totalLeave[index]['end_date'] = coverDate(totalLeave[index]['end_date']);
+                totalLeave[index]['start_date'] = coverDate(totalLeave[index]['start_date'])
+                const formApproved = {
+                    ...totalLeave[index], btnColor: btnColor, statusMessage: statusMessage,
+                    statusIconType: statusIconType
+                };
+                acceptedLeave.push(formApproved);
+
+
+            } else if (totalLeave[index]['approve_status'] < 2) {
+
+                if (totalLeave[index]['approve_status'] === 0) {
+                    btnColor = "btn btn-warning";
+                    statusMessage = "Pending";
+                    statusIconType = "fa-spinner";
+                }
+                else if (totalLeave[index]['approve_status'] === 1) {
+                    btnColor = "btn btn-danger";
+                    statusMessage = "Rejected";
+                    statusIconType = "fa-remove";
+                    rejectedRequest.push(totalLeave[index]);
+                }
+                totalLeave[index]['end_date'] = coverDate(totalLeave[index]['end_date']);
+                totalLeave[index]['start_date'] = coverDate(totalLeave[index]['start_date'])
+                const notApproved = { ...totalLeave[index], btnColor: btnColor, statusMessage: statusMessage, statusIconType: statusIconType };
+                notAccepted.push(notApproved);
+            }
 
         }
+
+        let daysLeft = this.availableDays(acceptedLeave);
+        this.setState({
+            approveRequest: acceptedLeave, rejectedRequest,
+            daysLeft, pendingRejectedRequest: notAccepted, tableSort: { path: "leave_type", order: "asc" }
+        });
+
+
+    }
+
+
+    availableDays = (acceptedLeave) => {
+        let count = 0;
+        for (let index = 0; index < acceptedLeave.length; index++) {
+            count += acceptedLeave[index]['off_days'];
+
+        }
+        let daysLeft = 30 - count;
+
+        return daysLeft;
+    }
+
+
+
+    getTableHeader = () => {
+        const tableTotalAbsence = [
+            { path: "leave_type", label: "Type" },
+            { path: "off_days", label: "Number Of Days" },
+            { path: "start_date", label: "Start Date" },
+            { path: "end_date", label: "End Date" },
+            { path: "approved_by", label: "Approved By" },
+        ]
+        return tableTotalAbsence;
+    }
+
+    getTableHeaderSummary = () => {
+        const checkList = { path: "off_days", label: "Number Of Days" };
+        let list = [...this.getTableHeader()];
+        const indexPlace = list.indexOf(checkList);
+        list[indexPlace] = { path: "off_days", label: "Request Days" };
+        this.setState({ summaryTableHeader: list });
+
+
+    }
+
+    componentDidMount() {
+        //   componentDidMount is the method that makes the data available once the page load
+        this.getLeaveData();
+        this.getTableHeaderSummary();
+        this.setState({ staffInfo: staffDetail });
+        this.setState({ requiredColumns: this.getTableHeader() });
+
+
+    }
+
+
+
+    componentDidUpdate(prevProps, prevState) {
+        console.log(this.state.approveRequest);
+        console.log("addsdfs: ", this.state.approveRequest);
+    }
+
+
+    componentWillUnmount() {
+        this.signal.cancel('Api is being canceled');
+        alert('destroy http request');
 
     }
 
@@ -198,10 +269,17 @@ class Dashboard extends React.Component {
 
     }
 
+    checkContent = () => {
+        console.log("show list of data");
+
+    }
+
     render() {
         // is use to print the contents of the array
         // this will make below array available once the app has  initialize
-        const { approveRequest, tableSort, requiredColumns, dataError, leaveSum, staffInfo, dateCommence, availableRequest } = this.state;
+        const { approveRequest, daysLeft, pendingRejectedRequest, summaryTableHeader,
+            tableSort, rejectedRequest, requiredColumns, staffInfo, dateCommence } = this.state;
+
         return (
             <div>
                 {/* header div nav */}
@@ -215,7 +293,6 @@ class Dashboard extends React.Component {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
                             <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
-
 
                             </ul>
                             <form className="form-inline my-2 my-lg-0">
@@ -245,7 +322,7 @@ class Dashboard extends React.Component {
 
 
                 <div style={{ marginTop: '100px', marginLeft: '3%' }}>
-                    <div className="container-fluid">
+                    <div className="container-fluid" style={{ marginBottom: '10%' }}>
                         <div>
                             <p className="pValue"> <span className="pHeading">Employee: </span>Alabi Temitope</p>
                         </div>
@@ -256,7 +333,7 @@ class Dashboard extends React.Component {
                                     <div className="card">
                                         <div className="statTitle card-header"></div>
                                         <div className="card-body">
-                                            <h5 className="statDayLeft card-title">4</h5>
+                                            <h5 className="statDayLeft card-title" > <span><i className={daysLeft ? "" : `spinner-border text-primary`}></i></span>{daysLeft}</h5>
                                             <p className="card-text">Out of 30 Leave Days Left</p>
                                         </div>
                                     </div>
@@ -269,13 +346,14 @@ class Dashboard extends React.Component {
                                             </div>
                                         <div className="card-body">
                                             {
-                                                this.state.approveRequest.length === 0 ? <div><p className="card-text">Time Off</p>
-                                                    <p style={{ fontWeight: 'bold' }} className="card-text">0 Days</p></div> :
+                                                approveRequest.length === 0 ? <div ><p className="card-text">
+                                                    <span><i className={`spinner-border text-primary`}></i></span></p>
+                                                    <p style={{ fontWeight: 'bold' }} className="card-text"></p></div> :
 
                                                     approveRequest.map((data, index) => {
                                                         return <div key={index}>
-                                                            <p style={{ marginBottom: '0px' }}>{data.reason}</p>
-                                                            <p className="pTag">{data.daysApprove} Days</p>
+                                                            <p style={{ marginBottom: '0px' }}>{data.leave_type}</p>
+                                                            <p className="pTag">{data.off_days} Days</p>
                                                         </div>
                                                     })
                                             }
@@ -292,13 +370,13 @@ class Dashboard extends React.Component {
                                             </div>
                                         <div className="card-body">
                                             {
-                                                this.state.approveRequest.length === 0 ? <div><p className="card-text">Time Off</p>
+                                                rejectedRequest.length === 0 ? <div><p className="card-text">Time Off</p>
                                                     <p style={{ fontWeight: 'bold' }} className="card-text">30 Days Available</p></div> :
 
-                                                    availableRequest.map((data, index) => {
+                                                    rejectedRequest.map((data, index) => {
                                                         return <div key={index}>
-                                                            <p style={{ marginBottom: '0px' }}>{data.reason}</p>
-                                                            <p className="pTag">{data.daysLeft}</p>
+                                                            <p style={{ marginBottom: '0px' }}>{data.leave_type}</p>
+                                                            <p className="pTag">{data.off_days}</p>
                                                         </div>
                                                     })
                                             }
@@ -334,25 +412,23 @@ class Dashboard extends React.Component {
                         <div>
 
 
-                            <p style={{ marginTop: '10%' }} className="subTitleOne">Calender</p>
+                            <p className="subTitleOne">Calender</p>
                             <div style={{ marginBottom: '4%' }} className="text-center">Upcoming Months <button
                                 onClick={() => {
                                     this.checkCklick();
 
                                 }}>{!this.state.showMore ? 'Next' : 'Previous'} </button></div>
 
-                            <div className="row" style={{ marginLeft: '5%', marginBottom: '15%' }}>
+                            <div className="row" style={{ marginLeft: '5%' }}>
 
                                 {/*  col 1 calender*/}
                                 {!this.state.showMore ? dateCommence.map((data, index) => {
-
-
                                     return (<div key={index}>
                                         <div className="col-md-3">
                                             <InfiniteCalendar
                                                 width={300}
-                                                height={400}
-                                                selected={data}
+                                                height={600}
+                                                selected={[data]}
                                                 disabledDays={[0, 6]}
                                                 minDate={lastWeek}
                                                 min={data}
@@ -394,101 +470,17 @@ class Dashboard extends React.Component {
                             </div>
                         </div>
 
-                        <p style={{ marginTop: '10%' }} className="subTitleOne">Summary of Submitted Leave Request</p>
-                        <div className="row mb-5 py-3">
-                            <div className="col-12">
-                                <table id="submittedFormTable" className="table table-hover display">
-                                    <thead>
-                                        <tr>
-                                            <th>Type</th>
-                                            <th>Request Days</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {/* {
-
-                                            leaveSum.length > 0 ? leaveSum.map((item, index) => {
-                                                var btnColor = "";
-                                                var statusMessage = "";
-                                                if (item.approvestatus < 2) {
-                                                    if (item.approvestatus === 0) {
-                                                        btnColor = "btn btn-warning"; statusMessage = "Pending";
-                                                    }
-                                                    else if (item.approvestatus === 1) { btnColor = "btn btn-danger"; statusMessage = "Rejected" }
-                                                    return <tr key={index}>
-                                                        <td>{item.leavetype}</td>
-                                                        <td>{item.offdays} </td>
-                                                        <td>{this.coverDate(item.startdate)} </td>
-                                                        <td>{this.coverDate(item.enddate)}</td>
-                                                        <td><button className={btnColor}>{statusMessage}</button></td>
-
-                                                    </tr>
-                                                }
-
-                                            }) :
-                                                <tr>
-
-                                                    <td colSpan="5">{dataError[0] ? "No data found" : `please wait `} <span><i className={dataError[0] ? "" : `spinner-border text-primary`}></i></span></td>
-                                                </tr>
-                                        } */}
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <p style={{ marginTop: '10%' }} className="subTitleOne">All Absence</p>
-                        <div className="row mb-5 py-3">
-                            <div className="col-12">
-                                <table id="acceptedTable" className="table table-hover display">
-                                    <thead>
-                                        <tr>
-                                            <th>Type</th>
-                                            <th>Number Of Days</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Approved By</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        {
-                                            leaveSum.length > 0 ? leaveSum.map((item, index) => {
-                                                var btnColor = "";
-                                                var statusMessage = "";
-
-                                                if (item.approvestatus === 2) {
-                                                    btnColor = "btn btn-success"; statusMessage = "Accepted";
-                                                    return <tr key={index}>
-                                                        <td>{item.leavetype}</td>
-                                                        <td>{item.offdays}</td>
-                                                        <td>{this.coverDate(item.startdate)}</td>
-                                                        <td>{this.coverDate(item.enddate)}</td>
-                                                        <td>{item.approvedby}</td>
-                                                        <td><button className={btnColor}>{statusMessage}</button></td>
-
-                                                    </tr>
-                                                }
-
-                                            }) : <tr >
-                                                    <td colSpan="6">{dataError[0] ? "No data available yet for days you are not at work" : `please wait `} <span><i className={dataError[0] ? "" : `spinner-border text-primary`}></i></span></td>
-                                                </tr>
-                                        }
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <p className="subTitleOne">Summary of Submitted Leave Request</p>
+                        <ParentTable  {...this.props} leaveSum={pendingRejectedRequest} tableSort={tableSort}
+                            approve_status={'approve_status'} approveState={'Status'} viewAppText={`view application`}
+                            requiredColumns={summaryTableHeader} removeColumn={[0, -1]}
+                        />
 
 
                         {/* no table imported  */}
-                        <p style={{ marginTop: '10%' }} className="subTitleOne">All Absence</p>
-                        <Movies {...this.props} leaveSum={this.state.leaveSum} tableSort={tableSort}
-                            approvestatus={'approvestatus'} approveState={'Status'}
+                        <p className="subTitleOne">All Absence</p>
+                        <ParentTable  {...this.props} leaveSum={approveRequest} tableSort={tableSort}
+                            approve_status={'approve_status'} approveState={'Status'} viewAppText={`view application`}
                             requiredColumns={requiredColumns} removeColumn={[0, -1]} />
                     </div>
 

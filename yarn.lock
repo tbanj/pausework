@@ -8488,6 +8488,13 @@ react-error-overlay@^5.1.4:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.1.5.tgz#884530fd055476c764eaa8ab13b8ecf1f57bbf2c"
   integrity sha512-O9JRum1Zq/qCPFH5qVEvDDrVun8Jv9vbHtZXCR1EuRj9sKg1xJTlHxBzU6AkCzpvxRLuiY4OKImy3cDLQ+UTdg==
 
+react-filtered-multiselect@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/react-filtered-multiselect/-/react-filtered-multiselect-0.5.1.tgz#cf825395864159631c8615b6786ceebd6139f4ae"
+  integrity sha512-GV8VFVhZGrRFSXzUGkGo554MOD1Ebq16mVFMpxFJw94OvV8FuGcG44DMgSsjrYD84D4FEvG1Zayddmfoi7FETQ==
+  dependencies:
+    prop-types "^15.5.7"
+
 react-infinite-calendar@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/react-infinite-calendar/-/react-infinite-calendar-2.3.1.tgz#97f63983b3ee1ec0df476b36b8227c7db0edbf85"

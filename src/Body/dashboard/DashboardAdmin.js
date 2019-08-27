@@ -88,7 +88,7 @@ class DashboardAdmin extends React.Component {
         try {
             if (!(token && isAdmin)) { return this.props.history.push('/'); }
             const res = await axios.get(`${env.api}/leave/?employee=${tokenConvert['id']}&admin_key=${adminKey}`, {
-                headers: { 'Authorization': `Bearer ${token}`, 'Isadmin': `Bearer ${isAdmin}` }
+                headers: { 'Authorization': `Bearer ${token}`, 'is_admin': `Bearer ${isAdmin}` }
             });
 
             // if(!localStorage.getItem('totalLeaves')) {totalLeave =[]; }

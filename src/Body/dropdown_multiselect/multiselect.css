@@ -1,0 +1,29 @@
+.removePad {
+    padding-left: 0px !important;
+}
+.colorTest{
+    background-color: red
+}
+
+.spanParent {
+    border: 1px solid black;
+    outline: 0px;
+    background-color: white;
+    border-radius: 4px;
+    cursor: text;
+     display: block; 
+     min-height: 32px;
+}
+
+.addMargin{
+    margin-bottom: 1%;
+     margin-left: 1%; 
+}
+.addMarginTop {
+    margin-top: 1%;
+}
+
+.innerSpanUl {
+    background-color: #e4e4e4;
+     border-radius: 3px;
+}

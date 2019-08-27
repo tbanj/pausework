@@ -4,14 +4,13 @@ import { getMovies } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import Pagination from "./pagination";
 import { paginate } from "../utils/paginate";
-import Genres from "./genres";
-import MoviesTable from "./moviesTable";
+import SubParentTable from "./SubParentTable";
 import _ from "lodash";
 // const movies = require("./../api/fakeMoviesService.js");
 
 let movieListA = [];
 const getItem = new Storage();
-class Movies extends Component {
+class ParentTable extends Component {
   state = {
     movies: [],
     pageSize: 4,
@@ -67,14 +66,11 @@ class Movies extends Component {
     const {
       currentPage,
       pageSize,
-      movies: AllMovies,
-      selectedGenre,
-      genres,
       sortColumn,
     } = this.state;
-    const { leaveSum, requiredColumns, dataError, removeColumn,
-      buttonName, approvestatus, approveState } = this.props;
-    console.log('wahab ', typeof requiredColumns, requiredColumns);
+    // removeColumn, requiredColumns,statusIconType, approve_status, approveState, viewAppText
+    const { leaveSum, dataError, ...rest } = this.props;
+    console.log('wahab ');
 
     // const filtered =
     //   selectedGenre && selectedGenre._id
@@ -87,6 +83,7 @@ class Movies extends Component {
 
     // array to populate data to users
     const leaves = paginate(sorted, currentPage, pageSize);
+    console.log("hi", currentPage);
 
     return (
       <div>
@@ -95,16 +92,13 @@ class Movies extends Component {
             <React.Fragment>
               <div className="row my-4">
                 <div className="col">
-                  <MoviesTable
+                  <SubParentTable
                     leaves={leaves}
+                    currentPage={currentPage}
                     sortColumn={sortColumn}
                     onDelete={this.handleDelete}
                     onSort={this.handleSort}
-                    requiredColumns={requiredColumns}
-                    removeColumn={removeColumn}
-                    buttonName={buttonName}
-                    approvestatus={approvestatus}
-                    approveState={approveState}
+                    {...rest}
                   />
                 </div>
               </div>
@@ -118,7 +112,7 @@ class Movies extends Component {
           itemsCount={filtered.length}
           pageSize={pageSize}
           currentPage={currentPage}
-          requiredColumns={requiredColumns}
+          {...rest}
         />
 
       </div>
@@ -126,4 +120,4 @@ class Movies extends Component {
   }
 }
 
-export default Movies;
+export default ParentTable;
