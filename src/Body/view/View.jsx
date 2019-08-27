@@ -166,7 +166,7 @@ class View extends Component {
             <React.Fragment>
                 <Header />
                 <div className="py-5" style={{ marginBottom: '10%', backgroundColor: '#f4f6f9' }}>
-                    <div style={{ marginTop: '5%' }} >{match.params.id}</div>
+                    {/* <div style={{ marginTop: '5%' }} >{match.params.id}</div> */}
                     <div className="offset-md-1 col-md-10">
                         <div className="card">
                             <div className="card-body">
