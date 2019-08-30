@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
 import axios from 'axios';
+import { register } from "../services/userService.js";
+import { storeToken, country, gender } from "../services/authService.js";
 import env from '../../env';
 
 import './signup.scss';
@@ -18,10 +20,10 @@ var timezoneError = " you are yet to select a timezone";
 var genderError = " you are yet to select a gender";
 var ageError = "valid age required";
 
-var countryList = [{ name: 'Nigeria' }, { name: 'Ghana' }, { name: 'USA' }, { name: 'Canada' }];
-var timezoneList = [{ name: 'West Africa/Lagos' }, { name: 'Europe/London' },
-{ name: 'America/California' }, { name: 'Middle East/New Delhi' }];
-var genderList = [{ name: 'male' }, { name: 'female' }];
+// var countryList = [{ name: 'Nigeria' }, { name: 'Ghana' }, { name: 'USA' }, { name: 'Canada' }];
+// var timezoneList = [{ name: 'West Africa/Lagos' }, { name: 'Europe/London' },
+// { name: 'America/California' }, { name: 'Middle East/New Delhi' }];
+// var genderList = [{ name: 'male' }, { name: 'female' }];
 
 
 var timezoneSelected;
@@ -33,8 +35,6 @@ var genderSelected;
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 );
-
-
 const formValid = ({ formErrors, ...rest }) => {
   let valid = true;
 
@@ -51,95 +51,47 @@ const formValid = ({ formErrors, ...rest }) => {
   return valid;
 };
 class Signup extends React.Component {
-
+  // country: 'Select Country', gender: 'Select Gender', genderSelected: '', timezone: 'Select Timezone',
   constructor(props) {
     super(props);
 
     this.state = {
-      employee_id: null,
-      firstName: null,
-      lastName: null,
-      email: null,
-      password: null,
-      timezone: 'Select Timezone',
-      country: 'Select Country',
-      age: null,
-      serverError: '',
-      gender: 'Select Gender',
-      submitLoader: '',
-
-      errorFirst: false,
-      errorLast: false,
-      errorEmployee: false,
-      errorPassword: false,
-      errorEmail: false,
-      errorCountry: false,
-      errorTimezone: false,
-      errorGender: false,
-      errorAge: false,
+      employee_id: null, firstName: null, lastName: null, email: null, password: null,
+      age: null, serverError: '', gender: '', timezone: '', country: '', submitLoader: '',
+      errorFirst: false, errorLast: false, errorEmployee: false, errorPassword: false, errorEmail: false,
+      errorCountry: false, errorTimezone: false, errorGender: false, errorAge: false, genderList: [], countryList: [],
 
       formErrors: {
-
-        firstName: "",
-        lastName: "",
-        employee_id: "",
-        email: "",
-        password: "",
-        timezone: "",
-        country: "",
-        age: "",
-        gender: ""
+        firstName: "", lastName: "", employee_id: "",
+        email: "", password: "", timezone: "", country: "", age: "", gender: ""
       }
     };
 
-    //   if(localStorage.getItem('pausework-token')){
-    //     this.props.history.push('/dashboard');
-    // }
     this.successSubmit = this.successSubmit.bind(this);
   }
-
-
 
   handleSubmit = e => {
     e.preventDefault();
     // errorFirst.style.display = "none";
-    if (formValid(this.state)) {
-      console.log(`
-           
-            First Name: ${this.state.firstName}
-            Last Name: ${this.state.lastName}
-            Employee Id: ${this.state.employee_id}
-            Email: ${this.state.email}
-            Password: ${this.state.password}
-          `);
-    } else {
+    if (!formValid(this.state)) {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
   };
 
   handleChange = e => {
-    this.setState({ errorFirst: false });
-    this.setState({ errorLast: false });
-    this.setState({ errorEmail: false });
-    this.setState({ errorLast: false });
-    this.setState({ errorPassword: false });
-    this.setState({ errorEmployee: false });
-    this.setState({ errorCountry: false });
-    this.setState({ errorTimezone: false });
-    this.setState({ errorAge: false });
-    this.setState({ errorGender: false });
-
+    this.setState({
+      errorFirst: false, errorLast: false, errorEmail: false, errorPassword: false, errorEmployee: false,
+      errorCountry: false, errorTimezone: false, errorAge: false, errorGender: false
+    });
 
     e.preventDefault();
     const { name, value } = e.target;
+
     let formErrors = { ...this.state.formErrors };
 
     switch (name) {
-
       case "firstName":
-        formErrors.firstName = value.length >= 1 && value.length < 2
-          ? firstError
-          : "";
+        formErrors.firstName = value.length >= 1 && value.length < 2 ? firstError : "";
         break;
       case "lastName":
         formErrors.lastName =
@@ -147,38 +99,26 @@ class Signup extends React.Component {
         break;
 
       case "age":
-        formErrors.age =
-          value < 1 ? ageError : "";
-
+        formErrors.age = value < 1 ? ageError : "";
         break;
 
       case "employee_id":
-        formErrors.employee_id =
-          value.length >= 1 && value.length < 5 ? employeeIdError : "";
+        formErrors.employee_id = value.length >= 1 && value.length < 5 ? employeeIdError : "";
         break;
 
       case "country":
-        formErrors.country =
-          this.state.country === "Select Country" ? countryError : "";
+        formErrors.country = this.state.country === "Select Country" ? countryError : "";
         break;
 
       case "gender":
-        formErrors.gender =
-          this.state.gender === 'Select Gender' ? genderError : "";
-
-
+        formErrors.gender = this.state.gender === 'Select Gender' ? genderError : "";
         break;
-
-
       case "timezone":
-        formErrors.timezone =
-          this.state.timezone === "Select Timezone" ? timezoneError : "";
+        formErrors.timezone = this.state.timezone === "Select Timezone" ? timezoneError : "";
         break;
 
       case "email":
-        formErrors.email = emailRegex.test(value)
-          ? ""
-          : emailError;
+        formErrors.email = emailRegex.test(value) ? "" : emailError;
         break;
       case "password":
         formErrors.password =
@@ -189,17 +129,9 @@ class Signup extends React.Component {
     }
 
     // acquiring country & timezone selected from option
-    countrySelected = document.getElementById('idcountry').value;
-    this.setState({ country: countrySelected });
-    timezoneSelected = document.getElementById('idtimezone').value;
-    this.setState({ timezone: timezoneSelected });
-
-    genderSelected = document.getElementById('idgender').value;
-    this.setState({ gender: genderSelected });
-
     // u can add callback to the function below to see how the value is being set
-    this.setState({ formErrors, [name]: value }
-    );
+    this.setState({ formErrors, [name]: value });
+
 
   };
 
@@ -219,29 +151,49 @@ class Signup extends React.Component {
         "is_admin": false,
         "password": this.state.password
       }
-      const res = await axios.post(`${env.api}/employee`, body,
-      );
-      console.log(res.data);
-
-      const token = res.data.data.token;
-
-      const info = res.data.data.employee.is_admin;
-
-      localStorage.setItem('pausework-token', token);
-      localStorage.setItem('pausework-info', info);
+      const res = await register(body);
+      storeToken(res.data.data.employee.is_admin, res.data.data.token)
       this.props.history.push('/dashboard');
 
 
 
     } catch (err) {
-      console.log('An error occured', err.response);
-      this.setState({ serverError: 'the email address already exist' });
-      this.setState({ submitLoader: '' });
-      console.log(this.state.serverError);
-      this.setState({ submitLoader: "" });
-
+      console.log('An error occured', err.response.data.data.error);
+      this.setState({ serverError: 'error encounter during registration' });
     }
   }
+
+  getGender = async () => {
+    try {
+      const { data } = await gender();
+      this.setState({ genderList: data.data });
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        console.log(error.response.data);
+
+      }
+    }
+  }
+
+  getCountry = async () => {
+    try {
+      const { data } = await country();
+      this.setState({ countryList: data.data });
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        console.log(error.response.data);
+
+      }
+    }
+  }
+
+
+  componentDidMount() {
+    this.getGender();
+    this.getCountry();
+  }
+
+
 
   checkSubmitError = e => {
     if (this.state.firstName === null ||
@@ -252,51 +204,25 @@ class Signup extends React.Component {
       || this.state.timezone === "Select Timezone"
       || this.state.gender === "Select Gender") {
 
-      if (this.state.firstName === null) {
-        this.setState({ errorFirst: true });
+      if (this.state.firstName === null) { this.setState({ errorFirst: true }); }
+      if (this.state.employee_id === null) { this.setState({ errorEmployee: true }); }
+      if (this.state.lastName === null) { this.setState({ errorLast: true }); }
+      if (this.state.password === null) { this.setState({ errorPassword: true }); }
+      if (this.state.email === null) { this.setState({ errorEmail: true }); }
 
-        console.log('there is error');
+      if (this.state.country === "Select Country") { this.setState({ errorCountry: true }); }
 
+      if (this.state.timezone === "Select Timezone") { this.setState({ errorTimezone: true }); }
+      if (this.state.gender === "Select Gender") { this.setState({ errorGender: true }); }
 
-      }
-      if (this.state.employee_id === null) {
-        this.setState({ errorEmployee: true });
-      }
-
-      if (this.state.lastName === null) {
-        this.setState({ errorLast: true });
-      }
-
-      if (this.state.password === null) {
-        this.setState({ errorPassword: true });
-      }
-
-      if (this.state.email === null) {
-        this.setState({ errorEmail: true });
-
-      }
-
-      if (this.state.country === "Select Country") {
-        this.setState({ errorCountry: true });
-      }
-
-      if (this.state.timezone === "Select Timezone") {
-        this.setState({ errorTimezone: true });
-      }
-      if (this.state.gender === "Select Gender") {
-        this.setState({ errorGender: true });
-      }
-
-      if (this.state.age === null) {
-        this.setState({ errorAge: true });
-      }
+      if (this.state.age === null) { this.setState({ errorAge: true }); }
     }
 
 
 
   }
   render() {
-    const { formErrors, submitLoader } = this.state;
+    const { formErrors, submitLoader, countryList, genderList } = this.state;
     return (
       <div className="fluid-container">
         {/* header div nav */}
@@ -379,17 +305,11 @@ class Signup extends React.Component {
                   )}
                 </div>
 
-
-
-
-
-
                 <div id="parentEmail" className="form-group">
                   <label >Email address</label>
                   <input type="email" className="form-control" placeholder="Enter email"
                     name="email" maxLength="40" noValidate onChange={this.handleChange} />
                   {this.state.errorEmail ? <span id="checkEmail" className="text-danger">{employeeIdError}</span> : ""}
-
                   {formErrors.email.length > 1 && (
                     <span className="text-danger">{formErrors.email}</span>
                   )}
@@ -402,13 +322,10 @@ class Signup extends React.Component {
                     noValidate
                     onChange={this.handleChange} />
                   {this.state.errorPassword ? <span id="checkPassword" className="text-danger">{passwordError}</span> : ""}
-
                   {formErrors.password.length > 1 && (
                     <span className="text-danger">{formErrors.password}</span>
                   )}
                 </div>
-
-                {/* age and gender */}
 
                 <div className="row ">
 
@@ -418,30 +335,26 @@ class Signup extends React.Component {
                       name="age" maxLength="2"
                       noValidate onChange={this.handleChange} required />
                     {this.state.errorAge ? <span id="checkAge" className="text-danger">{ageError}</span> : ""}
-
                     {formErrors.age < 1 && (
                       <span className="text-danger">{formErrors.age}</span>
                     )}
                   </div>
 
-
-
                   <div className="col-md-6  form-group">
                     <label htmlFor="country">Gender</label>
-                    <select className="form-control" onChange={this.handleChange} id="idgender">
+                    <select className="form-control" onChange={this.handleChange} name={'gender'} id={'gender'}>
                       <option >Select Gender</option>
                       {
-                        genderList.map((item, ind) => {
-
-                          return <option key={ind}>{item.name}</option>
-                        })
+                        genderList.length > 0 ?
+                          genderList.map((item, ind) => {
+                            return <option value={item.name} key={ind}>{item.name}</option>
+                          })
+                          : <option>please wait</option>
                       }
                     </select>
 
                     {this.state.errorGender ? <span id="checkGender"
                       className="text-danger">{genderError}</span> : ""}
-
-
                     {formErrors.gender !== "Select Gender" && (
                       <span className="text-danger">{formErrors.gender}</span>
                     )}
@@ -450,20 +363,19 @@ class Signup extends React.Component {
 
                 <div className="form-group">
                   <label htmlFor="country">Country</label>
-                  <select className="form-control" onChange={this.handleChange} id="idcountry">
-                    <option >Select Country</option>
-                    {
-                      countryList.map((item, i) => {
-
-                        return <option key={i}>{item.name}</option>
-                      })
-                    }
+                  <select className="form-control" onChange={this.handleChange} name="country" id="country">
+                    {countryList.length > 0 ? <React.Fragment>
+                      <option >Select Country</option>
+                      {
+                        countryList.map((item, i) => {
+                          return <option value={item.name} key={i}>{item.name}</option>
+                        })
+                      }
+                    </React.Fragment> : <option>Please wait</option>}
                   </select>
 
                   {this.state.errorCountry ? <span id="checkCountry"
                     className="text-danger">{countryError}</span> : ""}
-
-
                   {formErrors.country !== "Select Country" && (
                     <span className="text-danger">{formErrors.country}</span>
                   )}
@@ -471,28 +383,22 @@ class Signup extends React.Component {
 
                 <div className="form-group ">
                   <label htmlFor="timezone">Timezone</label>
-                  <select className="form-control" onChange={this.handleChange} id="idtimezone">
+                  <select className="form-control" onChange={this.handleChange} name="timezone" id="timezone">
                     <option >Select Timezone</option>
                     {
-                      timezoneList.map((item, ine) => {
+                      countryList.map((item, ine) => {
 
-                        return <option key={ine}>{item.name}</option>
+                        return <option value={item.timezone} key={ine}>{item.timezone}</option>
                       })
                     }
                   </select>
-
                   {this.state.errorTimezone ? <span id="checkTimezone"
                     className="text-danger">{timezoneError}</span> : ""}
-
-
                   {formErrors.timezone !== "Select Timezone" && (
                     <span className="text-danger">{formErrors.timezone}</span>
                   )}
                 </div>
-
-
                 <div className="text-center">
-
                   {formValid(this.state) ?
                     <button type="submit"
                       onClick={this.successSubmit} className="btn btn-primary">Submit Form Now <span role="img" aria-label="Rocket">🚀</span><i className={submitLoader}></i></button>

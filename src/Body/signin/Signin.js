@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
 import axios from 'axios';
 import env from '../../env';
+import { storeToken, login } from "../services/authService.js";
 import './signin.scss';
 
 
@@ -59,8 +60,6 @@ class Signin extends React.Component {
     e.preventDefault();
 
     if (formValid(this.state)) {
-
-
     } else {
       // console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
@@ -78,10 +77,6 @@ class Signin extends React.Component {
     let formErrors = { ...this.state.formErrors };
 
     switch (name) {
-
-
-
-
       case "email":
         formErrors.email = emailRegex.test(value)
           ? ""
@@ -107,19 +102,23 @@ class Signin extends React.Component {
       const body = {
         "email": this.state.email,
         "password": this.state.password
-      }
+      };
+
+
       let submitLoader = "spinner-border text-light";
       this.setState({ submitLoader });
 
-      const res = await axios.post(`${env.api}/employee/signin`, body);
+      // const res = await axios.post(`${env.api}/employee/signin`, body);
+      const { data } = await login(body);
+      console.log(data);
 
-      const token = res.data.data.token;
+      // const token = res.data.data.token;
 
-      const info = res.data.data.result;
+      // const info = res.data.data.result;
+      // console.log(token, info);
 
-      localStorage.setItem('pausework-info', info.is_admin);
+      storeToken(data.data.result.is_admin, data.data.token);
 
-      localStorage.setItem('pausework-token', token);
       setTimeout(() => {
         this.props.history.push('/dashboard');
       }, 4000);
@@ -220,13 +219,23 @@ class Signin extends React.Component {
                       onChange={this.handleChange} />
 
 
-                    <div style={{ fontWeight: 'bold', float: 'right' }} > <a href="/"> Forget Password ?</a></div>
+                    {/* <div style={{ fontWeight: 'bold', float: 'right' }} > <a href="/"> Forget Password ?</a></div> */}
 
                     {this.state.errorPassword ? <span className="text-danger">{errorPassword}</span> : ""}
 
                     {formErrors.password.length > 0 && (
                       <span className="text-danger">{formErrors.password}</span>
                     )}
+                  </div>
+
+                  <div className="form-group row">
+                    <div className="col-md-12">
+                      <div className="checkbox checkbox-primary pull-left p-t-0">
+                        <input id="checkbox-signup" type="checkbox" className="filled-in chk-col-light-blue" />
+                        <label htmlFor="checkbox-signup"> Remember me </label>
+                      </div>
+                      <a id="#forgetPassword" href="#forgetPassword" className="text-dark pull-right"><i className="fa fa-lock m-r-5"></i> Forgot password?</a> </div>
+
                   </div>
 
                   <div style={{ marginTop: '10%' }} className="text-center">

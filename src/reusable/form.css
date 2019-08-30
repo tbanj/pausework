@@ -1,0 +1,19 @@
+.backgroundLogin {
+    height: -webkit-fill-available;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(/src/assets/background/login-register.jpg);
+}
+
+.resizeCard {
+    top: 30%;
+}
+
+.backgroundRegister {
+    background-image: url(/background/login-register.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: -webkit-fill-available;
+}

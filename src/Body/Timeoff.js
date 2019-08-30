@@ -1,8 +1,8 @@
 import React from 'react';
-
-import './timeoff.scss';
-
+import $ from "jquery";
+import { findDOMNode } from "react-dom";
 import { Link } from 'react-router-dom';
+import './timeoff.scss';
 
 
 class Timeoff extends React.Component {
@@ -14,11 +14,23 @@ class Timeoff extends React.Component {
       this.props.history.push('/dashboard');
     }
   }
+
+  handleAdminPage = () => {
+    const elBtnFade = findDOMNode(this.refs.btnFade);
+    $(elBtnFade).fadeToggle(1000);
+    setTimeout(() => {
+      this.props.history.push('/signupadmin');
+    }, 1000);
+
+
+  }
+
+  componentWillUnmount() {
+    // this.handleAdminPage('destroy');
+  }
   render() {
     return (
-      <div  >
-
-
+      <div ref="btnFade">
 
         {/* header div nav */}
         <div className="row navBackground fixed-top">
@@ -134,10 +146,18 @@ class Timeoff extends React.Component {
                               If you are yet to be diagonized, kindly visit the health department!</p>
             </div>
           </div>
+          <div className="fluid-container col-md-4 offset-md-4 col-sm-12 my-5">
+            <button onClick={this.handleAdminPage}
+              type="button" className="btn btn-rounded btn-block btn-outline-primary" style={{ fontSize: '25px' }}>Create Admin Account</button>
+          </div>
         </div>
 
 
+
+
         {/* <div className={{marginBottom: '500px'}}>aaa</div> */}
+
+        <div></div>
 
       </div>
     );

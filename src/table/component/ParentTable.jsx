@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import Storage from "../localstorage/Storage";
-import { getMovies } from "../services/fakeMovieService";
-import { getGenres } from "../services/fakeGenreService";
 import Pagination from "./pagination";
 import { paginate } from "../utils/paginate";
 import SubParentTable from "./SubParentTable";
@@ -23,7 +21,7 @@ class ParentTable extends Component {
 
   componentWillMount() {
     if (getItem.getItemsFromStorage().length === 0) {
-      this.handleStoreItem();
+      // this.handleStoreItem();
       return;
     }
     movieListA = getItem.getItemsFromStorage();
@@ -31,14 +29,14 @@ class ParentTable extends Component {
   }
 
   componentDidMount() {
-    const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
-    this.setState({ genres: genres });
+    // const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
+    // this.setState({ genres: genres });
   }
 
-  handleStoreItem() {
-    this.setState({ movies: getMovies() });
-    getItem.storeItem(getMovies());
-  }
+  // handleStoreItem() {
+  //   this.setState({ movies: getMovies() });
+  //   getItem.storeItem(getMovies());
+  // }
 
   handleDelete = id => {
     getItem.deleteItemFromStorage(id);
@@ -69,7 +67,7 @@ class ParentTable extends Component {
       sortColumn,
     } = this.state;
     // removeColumn, requiredColumns,statusIconType, approve_status, approveState, viewAppText
-    const { leaveSum, dataError, ...rest } = this.props;
+    const { leaveSum, dataError, daysLeft, ...rest } = this.props;
     console.log('wahab ');
 
     // const filtered =
@@ -83,7 +81,7 @@ class ParentTable extends Component {
 
     // array to populate data to users
     const leaves = paginate(sorted, currentPage, pageSize);
-    console.log("hi", currentPage);
+    console.log("hi", dataError, leaveSum);
 
     return (
       <div>
@@ -104,7 +102,7 @@ class ParentTable extends Component {
               </div>
             </React.Fragment>
           ) : (
-              <h3>{dataError ? "No leave record found" : "please wait "} <span><i className={dataError ? "" : `spinner-border text-primary`}></i></span></h3>
+              <h3>{daysLeft ? "No leave record found" : "please wait "} <span><i className={daysLeft ? "" : `spinner-border text-primary`}></i></span></h3>
             )}
         </div>
         <Pagination
