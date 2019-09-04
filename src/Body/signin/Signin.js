@@ -78,9 +78,7 @@ class Signin extends React.Component {
 
     switch (name) {
       case "email":
-        formErrors.email = emailRegex.test(value)
-          ? ""
-          : errorEmail;
+        formErrors.email = emailRegex.test(value) ? "" : errorEmail;
         break;
       case "password":
         formErrors.password =
@@ -89,13 +87,11 @@ class Signin extends React.Component {
       default:
         break;
     }
-
     this.setState({ formErrors, [name]: value });
   };
 
   async submitForm() {
     try {
-
       const body = {
         "email": this.state.email,
         "password": this.state.password
@@ -104,7 +100,6 @@ class Signin extends React.Component {
       let submitLoader = "spinner-border text-light";
       this.setState({ submitLoader });
       const { data } = await login(body);
-
       storeToken(data.data.result.is_admin, data.data.token);
 
       setTimeout(() => {
@@ -113,13 +108,13 @@ class Signin extends React.Component {
       swal("Login Successful!", "You clicked the button!", "success");
 
     } catch (err) {
-      var loginChecker = document.getElementById("errorLogin");
+      let loginChecker = document.getElementById("errorLogin");
       setTimeout(() => {
-        if (err.response === null) {
-          document.getElementById("errorContent").innerText = err; return;
+        if (!err.response.data['message']) {
+          loginChecker.style.display = "block";
+          document.getElementById("errorContent").innerText = 'server error'; return;
         }
-        else if (err.response !== null && err.response !== undefined) {
-
+        else if (err.response.data['message']) {
           loginChecker.style.display = "block";
           document.getElementById("errorContent").innerText = err.response.data['message'];
           this.setState({ submitLoader: '' });
@@ -178,9 +173,7 @@ class Signin extends React.Component {
               <form className="container mb-5" onSubmit={this.handleSubmit} noValidate style={{ padding: '2% 20%', marginTop: '35%' }}>
                 <div className="">
                   <div id="errorLogin" style={{ display: 'none' }} className="py-3">
-                    <div id="errorContent" className="alert alert-danger" role="alert">
-
-                    </div>
+                    <div id="errorContent" className="alert alert-danger" role="alert"></div>
                   </div>
                   <div className="text-center form-group">
                     <label >Email address</label>
