@@ -12,15 +12,11 @@ class View extends Component {
 
 
     handleDeselect(index) {
-        var selectedValue = this.state.selectedValue.slice()
-        console.log(this.state.selectedValue, "ddd");
+        var selectedValue = this.state.selectedValue.slice();
         selectedValue.splice(index, 1)
         this.setState({ selectedValue });
     }
-
-
     handleSelectionChange = (selectedValue) => {
-        console.log("ade");
         this.setState({ selectedValue })
     }
 
@@ -33,7 +29,6 @@ class View extends Component {
             select: `FilteredMultiSelect__select form-control ${this.props.selectClassName}`
         }
         this.setState({ classText });
-        console.log(this.state.selectedValue);
     }
 
 
@@ -43,20 +38,16 @@ class View extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(this.state.selectedValue);
         this.props.onMultiplySelect(this.state.selectedValue)
 
     }
 
     handleMultiselectt = () => {
-        console.log("hi");
-
     }
 
 
     render() {
         const { serverData } = this.props;
-        console.log(serverData);
         var { selectedValue } = this.state
         return (
             <React.Fragment>

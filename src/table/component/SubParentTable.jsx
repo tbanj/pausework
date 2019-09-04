@@ -42,8 +42,6 @@ class SubParentTable extends Component {
   columnsModified = this.props.removeColumn ? this.columns.slice(this.props.removeColumn[0], this.props.removeColumn[1]) : this.columns
   render() {
     const { leaves, ...rest } = this.props;
-    console.log('spread', this.props.currentPage);
-
     return (
       <Table
         columns={this.columnsModified}

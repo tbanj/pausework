@@ -59,10 +59,6 @@ app.get('/holidays', (req, res) => {
           const valueRateIn= Object.values(valueRateInn);
         //   const keyRate1 = valueRateInner.findIndex(number => number === 4);
           const keyRate1 =valueRateInn.filter(number => number ==="New Year's Day");
-         
-        //   console.log(valueRateIn);
-        
-          
             res.json(response.data);
         }, error => {
             res.status(400)
@@ -86,6 +82,5 @@ app.get('/holidaystwo', (req, res) => {
 server.listen(port, () => {
     console.log(`Server is listening for connection on ${port}`);
     // console.log(process.env.NODE_ENV);
-    // console.log(params);
     
 });

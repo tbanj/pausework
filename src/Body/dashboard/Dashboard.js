@@ -32,7 +32,6 @@ let staffDetail = [
 class Dashboard extends React.Component {
 
     signal = axios.CancelToken.source();
-
     constructor(props) {
         super(props);
 
@@ -56,41 +55,25 @@ class Dashboard extends React.Component {
 
         // mounting function
         this.logout = this.logout.bind(this);
-
-        console.log(verifyUser());
-
-        if (!verifyUser()) {
-            this.props.history.push('/');
-        }
-
     }
 
-
-
-
     getLeaveData = async () => {
-        let userInfo = getToken();
         let totalLeave;
-        console.log(userInfo);
         try {
-
-            if (!(userInfo[1] && userInfo[0])) { return this.props.history.push('/'); }
+            let userInfo = getToken();
             const res = await axios.get(`${env.api}/leave/user`, {
                 headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` },
                 cancelToken: this.signal.token,
             });
 
             if (res.data === null) { this.setState({ leaveSum: [] }); return; }
-
             totalLeave = res.data.data;
-            console.log(totalLeave)
             let dateAccepted = [];
             totalLeave.forEach(leave => {
                 if (leave.approve_status > 1) {
                     let dateObj = new Date(leave.start_date);
                     dateAccepted.push(dateObj);
                 }
-
             });
 
             this.setState({ dateCommence: dateAccepted });
@@ -104,20 +87,13 @@ class Dashboard extends React.Component {
             if (axios.isCancel(err)) {
                 console.log('Error: ', err.message); // => prints: Api is being canceled
                 dataError = err.message;
-                console.log("hiaa");
-
             } else {
-                console.log("hiaaqqq");
                 dataError = "error encounter while fetching leave information";
                 dataLoader = "spinner-border text-success";
             }
             this.setState({ dataError: [dataError, dataLoader] });
         }
-
-
     }
-
-
 
     getLeaveTypes = async (verifyUser, getLeaveData) => {
         let userInfo = verifyUser;
@@ -127,21 +103,16 @@ class Dashboard extends React.Component {
         let rejectedRequest = [];
 
         for (let index = 0; index < totalLeave.length; index++) {
-            console.log("a");
-
             let btnColor = "";
             let statusMessage = "";
             let statusIconType = "";
             if (totalLeave[index]['approved_by'] !== "not approved yet") {
-                console.log("b");
-
                 try {
                     const { data: adminStaff } = await axios.get(`${env.api}/employee/profile`, {
                         headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` },
                         cancelToken: this.signal.token,
                     });
                     totalLeave[index]['approved_by'] = `${adminStaff['data']['first_name']} ${adminStaff['data']['last_name']}`
-
                 } catch (error) {
                     let dataErrora;
                     if (axios.isCancel(error)) {
@@ -164,8 +135,6 @@ class Dashboard extends React.Component {
                     statusIconType: statusIconType
                 };
                 acceptedLeave.push(formApproved);
-
-
             } else if (totalLeave[index]['approve_status'] < 2) {
 
                 if (totalLeave[index]['approve_status'] === 0) {
@@ -208,8 +177,6 @@ class Dashboard extends React.Component {
         return daysLeft;
     }
 
-
-
     getTableHeader = () => {
         const tableTotalAbsence = [
             { path: "leave_type", label: "Type" },
@@ -240,8 +207,6 @@ class Dashboard extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("addsdfs: ", this.state.approveRequest.length);
-        console.log(this.state.dataErrora);
     }
 
     componentWillUnmount() {
@@ -282,15 +247,11 @@ class Dashboard extends React.Component {
 
     }
 
-    checkContent = () => {
-        console.log("show list of data");
-
-    }
 
     render() {
+        if (!verifyUser()) return <Redirect to="/" />
         // is use to print the contents of the array
         // this will make below array available once the app has  initialize
-
         const { approveRequest, daysLeft, pendingRejectedRequest, summaryTableHeader,
             tableSort, rejectedRequest, requiredColumns, staffInfo, dateCommence, dataError } = this.state;
 

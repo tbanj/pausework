@@ -7,7 +7,12 @@ import { Link } from 'react-router-dom';
 // import { Button } from 'semantic-ui-react';
 class Header extends Component {
 
+  logout = () => {
+    this.props.onLogout();
+  }
+
   render() {
+    const { onLogout } = this.props;
     return (
 
       <div className="row navBackground fixed-top">

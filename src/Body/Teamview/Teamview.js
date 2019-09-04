@@ -60,7 +60,6 @@ class Teamview extends React.Component {
     //   componentDidMount is the method that makes the data
     // available once the page load
     this.setState({ appUser: user });
-    console.log(this.state.appUser.firstname);
   }
 
   logout() {

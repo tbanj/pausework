@@ -91,12 +91,9 @@ class Signin extends React.Component {
     }
 
     this.setState({ formErrors, [name]: value });
-    // , () => console.log(this.state)
   };
 
   async submitForm() {
-
-
     try {
 
       const body = {
@@ -104,24 +101,15 @@ class Signin extends React.Component {
         "password": this.state.password
       };
 
-
       let submitLoader = "spinner-border text-light";
       this.setState({ submitLoader });
-
-      // const res = await axios.post(`${env.api}/employee/signin`, body);
       const { data } = await login(body);
-      console.log(data);
-
-      // const token = res.data.data.token;
-
-      // const info = res.data.data.result;
-      // console.log(token, info);
 
       storeToken(data.data.result.is_admin, data.data.token);
 
       setTimeout(() => {
-        this.props.history.push('/dashboard');
-      }, 4000);
+        this.props.history.push(`/${data.data.urlTo}`);
+      }, 2000);
       swal("Login Successful!", "You clicked the button!", "success");
 
     } catch (err) {
@@ -142,11 +130,6 @@ class Signin extends React.Component {
     }
   }
 
-
-
-
-
-
   render() {
     const { formErrors } = this.state;
     return (
@@ -166,11 +149,9 @@ class Signin extends React.Component {
               </ul>
               <form className="form-inline my-2 my-lg-0">
                 <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
-
                   <li id="idSign" className="nav-item">
                     <Link className="nav-link navChild setFontColor" to="/signup">Signup</Link>
                   </li>
-
                   <li id="idSign" className="nav-item">
                     <Link to="/signin">
                       <button style={{ height: '35px' }} className="btn btn-outline-primary my-2 my-sm-0 setFontColor signinHov">

@@ -9,26 +9,23 @@ import env from '../../env';
 import './signup.scss';
 import Footer from '../../Footer/Footer';
 
-
-var firstError = "first name must be up to 2 characters and letters only";
-var employeeIdError = "valid employee Id required";
-var lastnameError = "minimum 2 characaters required and letters only";
-var emailError = "invalid email address";
-var passwordError = "minimum 6 characaters required";
-var countryError = " you are yet to select a country";
-var timezoneError = " you are yet to select a timezone";
-var genderError = " you are yet to select a gender";
-var ageError = "valid age required";
-
 // var countryList = [{ name: 'Nigeria' }, { name: 'Ghana' }, { name: 'USA' }, { name: 'Canada' }];
 // var timezoneList = [{ name: 'West Africa/Lagos' }, { name: 'Europe/London' },
 // { name: 'America/California' }, { name: 'Middle East/New Delhi' }];
 // var genderList = [{ name: 'male' }, { name: 'female' }];
 
-
-var timezoneSelected;
-var countrySelected;
-var genderSelected;
+let firstError = "first name must be up to 2 characters and letters only";
+let employeeIdError = "valid employee Id required";
+let lastnameError = "minimum 2 characaters required and letters only";
+let emailError = "invalid email address";
+let passwordError = "minimum 6 characaters required";
+let countryError = " you are yet to select a country";
+let timezoneError = " you are yet to select a timezone";
+let genderError = " you are yet to select a gender";
+let ageError = "valid age required";
+let timezoneSelected;
+let countrySelected;
+let genderSelected;
 
 // var errorFirst = document.getElementById("checkFirst");
 

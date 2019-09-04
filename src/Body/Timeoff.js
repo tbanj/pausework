@@ -1,7 +1,8 @@
 import React from 'react';
 import $ from "jquery";
 import { findDOMNode } from "react-dom";
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { verifyUser, getToken } from './services/authService.js';
 import './timeoff.scss';
 
 
@@ -10,28 +11,32 @@ class Timeoff extends React.Component {
   constructor(props) {
     super(props);
 
-    if (localStorage.getItem('pausework-token')) {
-      this.props.history.push('/dashboard');
-    }
+
   }
 
   handleAdminPage = () => {
     const elBtnFade = findDOMNode(this.refs.btnFade);
     $(elBtnFade).fadeToggle(1000);
     setTimeout(() => {
-      this.props.history.push('/signupadmin');
+      this.props.history.push('/admin-signup');
     }, 1000);
 
+  }
 
+  componentDidMount() {
   }
 
   componentWillUnmount() {
     // this.handleAdminPage('destroy');
   }
   render() {
+    if (getToken() !== null) {
+      const userStatus = getToken();
+      if (userStatus[0] === 'false' && verifyUser()) return <Redirect to="/dashboard" />
+      if (userStatus[0] === 'true' && verifyUser()) return <Redirect to="/admin-dashboard" />
+    }
     return (
       <div ref="btnFade">
-
         {/* header div nav */}
         <div className="row navBackground fixed-top">
           <nav className="navbar navbar-expand-lg navbar-light col-md-9 offset-md-1">
@@ -47,11 +52,6 @@ class Timeoff extends React.Component {
               </ul>
               <form className="form-inline my-2 my-lg-0">
                 <ul className="navbar-nav mr-auto mt-2 mt-lg-0 ">
-
-
-
-
-
                   <li id="idSign" className="nav-item">
                     <Link id="signup" className="nav-link navChild setFontColor" to="/signup">Signup</Link>
                   </li>
@@ -94,7 +94,7 @@ class Timeoff extends React.Component {
           </div>
         </div>
 
-        <div style={{ marginBottom: '10%' }} className="text-center">
+        <div style={{ marginBottom: '20%' }} className="text-center">
           <h2 className="firstH2" style={{ fontSize: "2.5rem", marginTop: '8%', marginBottom: '5%' }}>Common Reasons Why You Need To Relax</h2>
 
           <div className="row ">
@@ -146,9 +146,9 @@ class Timeoff extends React.Component {
                               If you are yet to be diagonized, kindly visit the health department!</p>
             </div>
           </div>
-          <div className="fluid-container col-md-4 offset-md-4 col-sm-12 my-5">
+          <div className="fluid-container col-md-6 offset-md-3 col-sm-12 my-5">
             <button onClick={this.handleAdminPage}
-              type="button" className="btn btn-rounded btn-block btn-outline-primary" style={{ fontSize: '25px' }}>Create Admin Account</button>
+              type="button" className="btn btn-rounded btn-block btn-outline-primary" style={{ fontSize: '25px', borderRadius: '15px' }}>Create Admin Account / Admin Login </button>
           </div>
         </div>
 

@@ -109,16 +109,10 @@ class NewAbsence extends React.Component {
   };
 
   handleChange = e => {
-    ;
     this.setState({ errorleavePurpose: false, errorleaveStart: false, errorleaveEnd: false, errorleaveDetail: false });
-
-
-
-
     e.preventDefault();
     const { name, value } = e.target;
     let formErrors = { ...this.state.formErrors };
-
     switch (name) {
       case "reasonforLeave":
         formErrors.reasonforLeave =
@@ -135,7 +129,6 @@ class NewAbsence extends React.Component {
     // acquiring leave purpose from input
     leavePurpose = document.getElementById('marital').value;
     this.setState({ reasonforLeave: leavePurpose, formErrors, [name]: value });
-
   };
 
   handleStartTime = e => {
@@ -168,11 +161,7 @@ class NewAbsence extends React.Component {
         "approve_message": "not yet reviewed",
         "approved_by": "not approved yet",
       }
-      console.log(body);
-
       const res = await axios.post(`${env.api}/leave`, body, { headers: { 'Authorization': `Bearer ${token}`, 'is_admin': `Bearer ${isAdmin}` } });
-
-
       setTimeout(() => {
         this.props.history.push('/dashboard');
       }, 4000);
@@ -186,8 +175,6 @@ class NewAbsence extends React.Component {
     localStorage.removeItem('pausework-token');
     localStorage.removeItem('pausework-info');
     this.props.history.push('/');
-
-
   }
 
   render() {

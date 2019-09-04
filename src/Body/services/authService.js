@@ -2,18 +2,28 @@ import http from './httpService.js';
 
 import env from "../../env.js";
 const authEndpoint = `${env.api}`;
-
 const tokenKey = "vidly-token";
 
 export function getToken() {
     if (!localStorage.getItem('pausework-info') && !localStorage.getItem('pausework-token')) {
-        return;
+        return null;
     }
     else {
         const isAdmin = localStorage.getItem('pausework-info');
         const token = localStorage.getItem('pausework-token');
         return [isAdmin, token];
     }
+}
+
+export async function getLeaves() {
+    const userInfo = getToken();
+    return http.get(`${authEndpoint}/leave`, {
+        headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` }
+    });
+}
+
+export function InsertAprovalName(totalLeav) {
+    return http.get(`${authEndpoint}/employee/query-employee?employee=${totalLeav}`);
 }
 
 export function verifyUser() {
@@ -26,6 +36,10 @@ export function verifyUser() {
     }
 }
 
+export function removeToken() {
+    localStorage.removeItem('pausework-token');
+    localStorage.removeItem('pausework-info');
+}
 
 
 export function storeToken(is_admin, token) {
@@ -36,6 +50,11 @@ export function storeToken(is_admin, token) {
 export function login(userDetail) {
     return http.post(`${authEndpoint}/employee/signin`, userDetail);
 }
+
+// export function adminLogin(userDetail) {
+//     return http.post(`${authEndpoint}/employee/admin-signin`, userDetail);
+// }
+
 
 export function gender() {
     return http.get(`${authEndpoint}/gender`);

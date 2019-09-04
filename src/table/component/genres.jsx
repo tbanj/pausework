@@ -18,7 +18,6 @@ class Genres extends Component {
             style={{ cursor: "pointer" }}
             onClick={() => {
               onItemSelect(genre);
-              console.log(genre[textProperty]);
             }}
             className={
               genre === selectedItem

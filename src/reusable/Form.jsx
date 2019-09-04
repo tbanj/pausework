@@ -100,7 +100,6 @@ class Form extends Component {
 
     renderDropdownGeneral(name, label, gen) {
         const { errors, cinemaList } = this.state;
-        console.log(name, gen, cinemaList);
         return (
             <div className="form-group">
                 <label htmlFor={name}>{label}</label>

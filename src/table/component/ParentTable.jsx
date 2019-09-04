@@ -68,7 +68,6 @@ class ParentTable extends Component {
     } = this.state;
     // removeColumn, requiredColumns,statusIconType, approve_status, approveState, viewAppText
     const { leaveSum, dataError, daysLeft, ...rest } = this.props;
-    console.log('wahab ');
 
     // const filtered =
     //   selectedGenre && selectedGenre._id
@@ -81,8 +80,6 @@ class ParentTable extends Component {
 
     // array to populate data to users
     const leaves = paginate(sorted, currentPage, pageSize);
-    console.log("hi", dataError, leaveSum);
-
     return (
       <div>
         <div className="container-fluid">

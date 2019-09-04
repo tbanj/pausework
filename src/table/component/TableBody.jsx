@@ -18,8 +18,8 @@ class TableBody extends Component {
     // dont make use of the state array so as to effect
     return (
       <tbody>
-        {data.map(item => (
-          <tr key={item._id}>
+        {data.map((item, key) => (
+          <tr key={key}>
             {columns.map(column => (
               <td key={this.createKey(item, column)}>
                 {this.renderCell(item, column)}

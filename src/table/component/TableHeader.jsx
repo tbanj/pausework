@@ -9,7 +9,6 @@ class TableHeader extends Component {
     removeTip: true,
   }
   raiseSort = path => {
-    console.log(path);
     const sortColumn = { ...this.props.sortColumn };
     if (sortColumn.path === path) {
       sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";

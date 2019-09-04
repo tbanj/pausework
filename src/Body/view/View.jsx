@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import env from '../../env';
 
+import { verifyUser, getToken, removeToken } from '../services/authService.js';
 import dummy from '../../assets/user-unisex-512.png';
 import Multiselect from "../dropdown_multiselect/Multiselect.jsx";
 import Header from '../../Header/Header';
@@ -79,20 +80,14 @@ class View extends Component {
     }
 
     handleMultiselect = (data) => {
-        // alert(" Multiselect button clicked");
-        console.log(data);
-
     }
 
     leaveRequestPostReply = () => {
-        console.log(" this button was clicked for leaveRequestPostReply");
     }
     handleApprove = () => {
-        console.log(" this button was clicked for handleApprove");
     }
 
     handleDispprove = () => {
-        console.log(" this button was clicked for handleDispprove");
     }
 
 
@@ -108,8 +103,6 @@ class View extends Component {
 
             if (res.data === null) { this.setState({ leaveSum: [] }); return; }
             this.setState({ leave_data: res.data.data });
-            console.log(this.state.leave_data);
-
         } catch (error) {
             if (axios.isCancel(error)) {
                 console.log('Error: ', error.message); // => prints: Api is being canceled
@@ -120,16 +113,6 @@ class View extends Component {
             }
         }
 
-    }
-
-    componentDidMount() {
-        this.setState({ data: CULTURE_SHIPS });
-        this.setState({ staffListShare: this.mapToView(staff_list) });
-        this.comfirmleave();
-
-    }
-    componentDidUpdate(prevProps, prevState) {
-        console.log(this.state.staffListShare);
     }
 
     mapToView(data) {
@@ -144,18 +127,24 @@ class View extends Component {
         return newData;
     }
 
+    handleLogout = () => {
+        removeToken();
+        this.props.history.push('/');
+    }
 
+    componentDidMount() {
+        this.setState({ data: CULTURE_SHIPS });
+        this.setState({ staffListShare: this.mapToView(staff_list) });
+        this.comfirmleave();
+
+    }
+    componentDidUpdate(prevProps, prevState) {
+    }
     componentWillUnmount() {
         this.signal.cancel('Api is being canceled');
     }
 
-
-
-    // leaveRequestShare(name) {
-    //     console.log("you click on leaveRequestShare button " + name);
-    // }
     leaveRequestShare = (name) => {
-        console.log("you click on leaveRequestShare button " + name);
     }
     render() {
         const { match } = this.props;
@@ -164,7 +153,7 @@ class View extends Component {
 
         return (
             <React.Fragment>
-                <Header />
+                <Header onLogout={this.handleLogout} />
                 <div className="py-5" style={{ marginBottom: '10%', backgroundColor: '#f4f6f9' }}>
                     {/* <div style={{ marginTop: '5%' }} >{match.params.id}</div> */}
                     <div className="offset-md-1 col-md-10">
@@ -215,12 +204,8 @@ class View extends Component {
 
                                     : {
                                         0: <p className="text-danger"><i>This Leave Application has been Declined</i> <i className="fa fa-times-circle"></i></p>,
-
-
                                         1: <p className="text-success"><i>This Leave Application has been Approved</i> <i className="fa fa-check-circle"></i></p>,
-
                                         2: <p className="text-warning"><i>This Leave Application is Pending</i> <i className="fa fa-exclamation-circle"></i></p>,
-
 
                                     }[leave_data['approve_status']]
                                 }
