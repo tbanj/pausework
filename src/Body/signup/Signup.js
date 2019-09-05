@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
 import axios from 'axios';
 import { register } from "../services/userService.js";
-import { storeToken, country, gender } from "../services/authService.js";
+import { storeToken, country, gender, getToken } from "../services/authService.js";
 import env from '../../env';
 
 import './signup.scss';
@@ -51,13 +51,11 @@ class Signup extends React.Component {
   // country: 'Select Country', gender: 'Select Gender', genderSelected: '', timezone: 'Select Timezone',
   constructor(props) {
     super(props);
-
     this.state = {
       employee_id: null, firstName: null, lastName: null, email: null, password: null,
       age: null, serverError: '', gender: '', timezone: '', country: '', submitLoader: '',
       errorFirst: false, errorLast: false, errorEmployee: false, errorPassword: false, errorEmail: false,
       errorCountry: false, errorTimezone: false, errorGender: false, errorAge: false, genderList: [], countryList: [],
-
       formErrors: {
         firstName: "", lastName: "", employee_id: "",
         email: "", password: "", timezone: "", country: "", age: "", gender: ""
@@ -149,8 +147,15 @@ class Signup extends React.Component {
         "password": this.state.password
       }
       const res = await register(body);
-      storeToken(res.data.data.employee.is_admin, res.data.data.token)
-      this.props.history.push('/dashboard');
+      storeToken(res.data.data.employee.is_admin, res.data.data.token);
+      const checkToken = getToken();
+      if (checkToken[0] === 'false') {
+        this.props.history.push('/dashboard');
+      }
+      if (checkToken[0] === 'true') {
+        this.props.history.push('/admin-dashboard');
+      }
+
 
 
 
@@ -167,7 +172,6 @@ class Signup extends React.Component {
     } catch (error) {
       if (error.response && error.response.status === 400) {
         console.log(error.response.data);
-
       }
     }
   }
@@ -206,12 +210,10 @@ class Signup extends React.Component {
       if (this.state.lastName === null) { this.setState({ errorLast: true }); }
       if (this.state.password === null) { this.setState({ errorPassword: true }); }
       if (this.state.email === null) { this.setState({ errorEmail: true }); }
-
       if (this.state.country === "Select Country") { this.setState({ errorCountry: true }); }
 
       if (this.state.timezone === "Select Timezone") { this.setState({ errorTimezone: true }); }
       if (this.state.gender === "Select Gender") { this.setState({ errorGender: true }); }
-
       if (this.state.age === null) { this.setState({ errorAge: true }); }
     }
 
@@ -340,7 +342,7 @@ class Signup extends React.Component {
                   <div className="col-md-6  form-group">
                     <label htmlFor="country">Gender</label>
                     <select className="form-control" onChange={this.handleChange} name={'gender'} id={'gender'}>
-                      <option >Select Gender</option>
+                      <option ></option>
                       {
                         genderList.length > 0 ?
                           genderList.map((item, ind) => {
@@ -362,7 +364,7 @@ class Signup extends React.Component {
                   <label htmlFor="country">Country</label>
                   <select className="form-control" onChange={this.handleChange} name="country" id="country">
                     {countryList.length > 0 ? <React.Fragment>
-                      <option >Select Country</option>
+                      <option ></option>
                       {
                         countryList.map((item, i) => {
                           return <option value={item.name} key={i}>{item.name}</option>
@@ -381,7 +383,7 @@ class Signup extends React.Component {
                 <div className="form-group ">
                   <label htmlFor="timezone">Timezone</label>
                   <select className="form-control" onChange={this.handleChange} name="timezone" id="timezone">
-                    <option >Select Timezone</option>
+                    <option ></option>
                     {
                       countryList.map((item, ine) => {
 

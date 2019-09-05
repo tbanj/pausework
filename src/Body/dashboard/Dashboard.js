@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import InfiniteCalendar from 'react-infinite-calendar';
 import { Redirect } from "react-router-dom";
+
 import { coverDate } from '../helper/helper.js';
-import { verifyUser, getToken } from '../services/authService.js';
+import http from "../services/httpService.js";
+import { verifyUser, getUserLeaves, InsertAprovalName } from '../services/authService.js';
 import ParentTable from './../../table/component/ParentTable';
-import env from '../../env';
 
 import 'react-infinite-calendar/styles.css'; // only needs to be imported once
 import './dashboard.scss';
@@ -15,13 +15,10 @@ import './dashboard.scss';
 
 
 // Render the Calendar
-var today = new Date();
-var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+// var today = new Date();
+// var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
 
-var calendarDate = [
-    new Date(2019, 0, 31), new Date(2019, 1, 28), new Date(2019, 2, 31), new Date(2019, 3, 30),
-]
-var MoreCalendarDate;
+
 
 let staffDetail = [
     { detail: 'Yearly Allocation', value: '30 working Days' },
@@ -30,104 +27,61 @@ let staffDetail = [
 
 
 class Dashboard extends React.Component {
-
-    signal = axios.CancelToken.source();
     constructor(props) {
         super(props);
 
         this.state = {
-            leaveSum: [],
-            checkState: [],
-            markedDate: [],
-            dateCommence: [],
-            rejectedRequest: [],
-            dataError: [],
-            summaryTableHeader: [],
-            daysLeft: "",
-            tableSort: '',
-            pendingRejectedRequest: [],
-            approveRequest: [],
-            count: 0,
-            clickNotice: null,
-            showMore: false,
-            staffInfo: [],
+            leaveSum: [], checkState: [], rejectedRequest: [], dataError: [],
+            markedDate: [], dateCommence: [], summaryTableHeader: [], isFetching: true,
+            daysLeft: "", tableSort: '', pendingRejectedRequest: [], remainStaffCalendar: [],
+            approveRequest: [], count: 0, clickNotice: null, showMore: false, staffInfo: [],
         };
 
         // mounting function
         this.logout = this.logout.bind(this);
     }
 
-    getLeaveData = async () => {
-        let totalLeave;
+    getList = async () => {
         try {
-            let userInfo = getToken();
-            const res = await axios.get(`${env.api}/leave/user`, {
-                headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` },
-                cancelToken: this.signal.token,
-            });
-
-            if (res.data === null) { this.setState({ leaveSum: [] }); return; }
-            totalLeave = res.data.data;
-            let dateAccepted = [];
-            totalLeave.forEach(leave => {
-                if (leave.approve_status > 1) {
-                    let dateObj = new Date(leave.start_date);
-                    dateAccepted.push(dateObj);
-                }
-            });
-
-            this.setState({ dateCommence: dateAccepted });
-            this.getLeaveTypes(userInfo, totalLeave);
-            return totalLeave;
-
+            let checker = await getUserLeaves();
+            this.setState({ data: checker.data.data });
         }
-        catch (err) {
-            let dataError;
-            let dataLoader;
-            if (axios.isCancel(err)) {
-                console.log('Error: ', err.message); // => prints: Api is being canceled
-                dataError = err.message;
-            } else {
-                dataError = "error encounter while fetching leave information";
-                dataLoader = "spinner-border text-success";
-            }
-            this.setState({ dataError: [dataError, dataLoader] });
+        catch (error) {
+            console.log(error);
+
         }
     }
 
-    getLeaveTypes = async (verifyUser, getLeaveData) => {
-        let userInfo = verifyUser;
-        let totalLeave = getLeaveData;
-        let acceptedLeave = [];
-        let notAccepted = [];
-        let rejectedRequest = [];
-
-        for (let index = 0; index < totalLeave.length; index++) {
-            let btnColor = "";
-            let statusMessage = "";
-            let statusIconType = "";
-            if (totalLeave[index]['approved_by'] !== "not approved yet") {
-                try {
-                    const { data: adminStaff } = await axios.get(`${env.api}/employee/profile`, {
-                        headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` },
-                        cancelToken: this.signal.token,
-                    });
-                    totalLeave[index]['approved_by'] = `${adminStaff['data']['first_name']} ${adminStaff['data']['last_name']}`
-                } catch (error) {
-                    let dataErrora;
-                    if (axios.isCancel(error)) {
-                        dataErrora = error.message;
-                    } else {
-                        dataErrora = "error encounter while fetching leave information";
-                    }
-                    this.setState({ dataErrora });
+    InsertAprrovalDetail = async () => {
+        let totalLeav = this.state.data;
+        try {
+            for (let index = 0; index < totalLeav.length; index++) {
+                if (totalLeav[index]['approved_by'] !== "not approved yet") {
+                    const { data: adminStaff } = await InsertAprovalName(totalLeav[index]['approved_by']);
+                    totalLeav[index]['approved_by'] = `${adminStaff['data']['first_name']} ${adminStaff['data']['last_name']}`
+                    this.setState({ checkD: adminStaff });
                 }
+            }
+            this.setState({ updateleaveSum: totalLeav, isFetching: false });
+            if (this.state.updateleaveSum.length === 0 && this.state.isFetching === false) {
+                this.setState({ errorData: 'check your network' });
+            }
+            this.getLeaveTypes(totalLeav);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    getLeaveTypes = (updateleaveSum) => {
+        let totalLeave = updateleaveSum; let acceptedLeave = []; let notAccepted = []; let rejectedRequest = [];
+        for (let index = 0; index < totalLeave.length; index++) {
+            let btnColor = ""; let statusMessage = ""; let statusIconType = "";
+            if (totalLeave[index]['approved_by'] !== "not approved yet") {
+
             }
 
             if (totalLeave[index]['approve_status'] === 2) {
-                btnColor = "btn btn-success";
-                statusMessage = "Accepted";
-                statusIconType = "fa-check";
+                btnColor = "btn btn-success"; statusMessage = "Accepted"; statusIconType = "fa-check";
                 totalLeave[index]['end_date'] = coverDate(totalLeave[index]['end_date']);
                 totalLeave[index]['start_date'] = coverDate(totalLeave[index]['start_date'])
                 const formApproved = {
@@ -138,9 +92,7 @@ class Dashboard extends React.Component {
             } else if (totalLeave[index]['approve_status'] < 2) {
 
                 if (totalLeave[index]['approve_status'] === 0) {
-                    btnColor = "btn btn-warning";
-                    statusMessage = "Pending";
-                    statusIconType = "fa-spinner";
+                    btnColor = "btn btn-warning"; statusMessage = "Pending"; statusIconType = "fa-spinner";
                 }
                 else if (totalLeave[index]['approve_status'] === 1) {
                     btnColor = "btn btn-danger";
@@ -157,23 +109,47 @@ class Dashboard extends React.Component {
         }
 
         let daysLeft = this.availableDays(acceptedLeave);
+        this.getAcceptedStartDate(acceptedLeave);
         this.setState({
-            approveRequest: acceptedLeave, rejectedRequest,
+            approveRequest: acceptedLeave, rejectedRequest, isFetching: false,
             daysLeft, pendingRejectedRequest: notAccepted, tableSort: { path: "leave_type", order: "asc" }
         });
-
-
     }
 
+    getAcceptedStartDate = (totalLeave) => {
+        let dateAccepted = [];
+        totalLeave.forEach(leave => {
+            if (leave.approve_status > 1) {
+                let data = {
+                    'start': new Date(leave.start_date),
+                    'end': new Date(leave.end_date)
+                }
+                dateAccepted.push(data);
+            }
+        });
+        this.setState({ dateCommence: dateAccepted });
+        this.checkNumberType(dateAccepted);
+    }
+
+
+    checkNumberType = (totalLeave) => {
+        let data = totalLeave; let num = data.length;
+        if (num % 2 === 0) { return null; }
+        else {
+            let remainStaffCalendar = [];
+            if (num > 4) {
+                remainStaffCalendar = data.slice(3);
+                this.setState({ remainStaffCalendar })
+            }
+        }
+    }
 
     availableDays = (acceptedLeave) => {
         let count = 0;
         for (let index = 0; index < acceptedLeave.length; index++) {
             count += acceptedLeave[index]['off_days'];
-
         }
         let daysLeft = 30 - count;
-
         return daysLeft;
     }
 
@@ -198,9 +174,12 @@ class Dashboard extends React.Component {
 
     }
 
+
+
     componentDidMount() {
         //   componentDidMount is the method that makes the data available once the page load
-        this.getLeaveData();
+        this.getList();
+        this.timer = setTimeout(() => this.InsertAprrovalDetail(), 5000);
         this.getTableHeaderSummary();
         this.setState({ staffInfo: staffDetail });
         this.setState({ requiredColumns: this.getTableHeader() });
@@ -210,34 +189,12 @@ class Dashboard extends React.Component {
     }
 
     componentWillUnmount() {
-        this.signal.cancel('Api is being canceled');
+        http.signal.cancel('Api is being canceled');
         console.log('destroy http request');
     }
 
     checkCklick() {
-        // var changeCalender = 0;
         this.setState({ showMore: !this.state.showMore });
-
-
-        MoreCalendarDate = [
-            new Date(2019, 0, 31), new Date(2019, 1, 28), new Date(2019, 2, 31), new Date(2019, 3, 30),
-            new Date(2019, 4, 2), new Date(2019, 5, 13), new Date(2019, 6, 25), new Date(2019, 7, 21),
-            new Date(2019, 8, 16), new Date(2019, 9, 8), new Date(2019, 10, 30), new Date(2019, 11, 24)
-        ]
-        var rem = [];
-
-        for (var i = 0; i < calendarDate.length; i++) {
-            var bd = this.filterCalender(calendarDate[i]);
-            rem.push(bd);
-
-        }
-
-        MoreCalendarDate.splice(0, rem.length);
-
-    }
-
-    filterCalender(value) {
-        MoreCalendarDate.filter((e) => { return e === value; });
     }
 
     logout() {
@@ -401,12 +358,12 @@ class Dashboard extends React.Component {
                                         <div className="col-md-3">
                                             <InfiniteCalendar
                                                 width={300}
-                                                height={600}
-                                                selected={[data]}
+                                                height={400}
+                                                selected={[data.end]}
                                                 disabledDays={[0, 6]}
-                                                minDate={lastWeek}
-                                                min={data}
-                                                max={data}
+                                                // minDate={lastWeek}
+                                                min={data.start}
+                                                max={data.end}
                                                 displayOptions={{
                                                     // layout: 'landscape',
                                                     showHeader: false,
@@ -418,17 +375,17 @@ class Dashboard extends React.Component {
                                     </div>)
                                 }
                                 ) :
-                                    MoreCalendarDate.map((data, index) => {
+                                    this.state.remainStaffCalendar.map((data, index) => {
                                         return (<div key={index}>
                                             <div className="col-md-3">
                                                 <InfiniteCalendar
                                                     width={300}
                                                     height={400}
-                                                    selected={[data]}
+                                                    selected={[data.end]}
                                                     disabledDays={[0, 6]}
-                                                    minDate={lastWeek}
-                                                    min={data}
-                                                    max={data}
+                                                    // minDate={lastWeek}
+                                                    min={data.start}
+                                                    max={data.end}
                                                     displayOptions={{
                                                         showHeader: false,
                                                         todayHelperRowOffset: 1

@@ -1,17 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
-import axios from 'axios';
-import env from '../../env';
 import { storeToken, login } from "../services/authService.js";
 import './signin.scss';
 
-
-
-
 var errorPassword = "minimum 6 characaters required";
 var errorEmail = "invalid email address";
-
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 );
@@ -19,7 +13,6 @@ const emailRegex = RegExp(
 
 const formValid = ({ formErrors, ...rest }) => {
   let valid = true;
-
   // validate form errors being empty
   Object.values(formErrors).forEach(val => {
     val.length > 0 && (valid = false);
@@ -37,28 +30,20 @@ class Signin extends React.Component {
     super(props);
 
     this.state = {
-      submitLoader: '',
-      email: null,
-      password: null,
+      submitLoader: '', email: null, password: null,
       formErrors: {
-        email: "",
-        password: "",
-        errorEmail: false,
-        errorPassword: false,
+        email: "", password: "", errorEmail: false, errorPassword: false,
       }
     };
 
     if (localStorage.getItem('pausework-token') && localStorage.getItem('pausework-info')) {
       this.props.history.push('/dashboard');
     }
-
     this.submitForm = this.submitForm.bind(this);
   }
 
   handleSubmit = e => {
-
     e.preventDefault();
-
     if (formValid(this.state)) {
     } else {
       // console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
@@ -106,13 +91,12 @@ class Signin extends React.Component {
         this.props.history.push(`/${data.data.urlTo}`);
       }, 2000);
       swal("Login Successful!", "You clicked the button!", "success");
-
     } catch (err) {
       let loginChecker = document.getElementById("errorLogin");
       setTimeout(() => {
         if (!err.response.data['message']) {
           loginChecker.style.display = "block";
-          document.getElementById("errorContent").innerText = 'server error'; return;
+          document.getElementById("errorContent").innerText = 'invalid login details'; return;
         }
         else if (err.response.data['message']) {
           loginChecker.style.display = "block";
@@ -191,8 +175,6 @@ class Signin extends React.Component {
                       name="password"
                       noValidate
                       onChange={this.handleChange} />
-
-
                     {/* <div style={{ fontWeight: 'bold', float: 'right' }} > <a href="/"> Forget Password ?</a></div> */}
 
                     {this.state.errorPassword ? <span className="text-danger">{errorPassword}</span> : ""}
@@ -221,24 +203,15 @@ class Signin extends React.Component {
                             onClick={this.submitForm} className={`btn btn-primary `}>Login<span role="img" aria-label="Rocket">🚀 🥇</span> <i className={this.state.submitLoader}></i></button>
                           : <button type="submit" onClick={() => {
                             if (this.state.email === null || this.state.password === null) {
-                              if (this.state.email === null) {
-                                this.setState({ errorEmail: true });
-                              }
-
-                              if (this.state.password === null) {
-                                this.setState({ errorPassword: true });
-
-                              }
+                              if (this.state.email === null) { this.setState({ errorEmail: true }); }
+                              if (this.state.password === null) { this.setState({ errorPassword: true }); }
                             }
                           }
-
                           }
                             className="btn btn-primary">Login</button>
                         }
 
                       </div>
-
-
                     </div>
                   </div>
                 </div>

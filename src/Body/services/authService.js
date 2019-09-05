@@ -17,13 +17,25 @@ export function getToken() {
 
 export async function getLeaves() {
     const userInfo = getToken();
-    return http.get(`${authEndpoint}/leave`, {
-        headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` }
-    });
+    const data = {
+        headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` },
+        cancelToken: http.signal.token,
+    };
+    return http.get(`${authEndpoint}/leave`, data);
+}
+
+export async function getUserLeaves() {
+    const userInfo = getToken();
+    const data = {
+        headers: { 'Authorization': `Bearer ${userInfo[1]}`, 'is_admin': `Bearer ${userInfo[0]}` },
+        cancelToken: http.signal.token,
+    };
+    return http.get(`${authEndpoint}/leave/user`, data);
 }
 
 export function InsertAprovalName(totalLeav) {
-    return http.get(`${authEndpoint}/employee/query-employee?employee=${totalLeav}`);
+    const data = { cancelToken: http.signal.token };
+    return http.get(`${authEndpoint}/employee/query-employee?employee=${totalLeav}`, data);
 }
 
 export function verifyUser() {

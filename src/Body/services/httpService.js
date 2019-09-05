@@ -5,6 +5,10 @@ axios.create({
     baseURL: process.env.REACT_APP_API_URL
 })
 
+// signal = axios.CancelToken.source();
+// cancelToken: this.signal.token,
+
+
 
 axios.interceptors.response.use(null, error => {
     const expectedErrror = error.response && error.response.status >= 400 && error.response.status < 500
@@ -15,6 +19,8 @@ axios.interceptors.response.use(null, error => {
     return Promise.reject(error);
 
 });
+
+
 
 function setJwt(jwt) {
     // axios.defaults.headers.common['x-auth-token'] = jwt;
@@ -29,4 +35,5 @@ export default {
     patch: axios.patch,
     delete: axios.delete,
     setJwt,
+    signal: axios.CancelToken.source()
 }
