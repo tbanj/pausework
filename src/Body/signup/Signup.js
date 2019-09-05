@@ -1,18 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import swal from 'sweetalert';
-import axios from 'axios';
 import { register } from "../services/userService.js";
 import { storeToken, country, gender, getToken } from "../services/authService.js";
-import env from '../../env';
 
 import './signup.scss';
-import Footer from '../../Footer/Footer';
-
-// var countryList = [{ name: 'Nigeria' }, { name: 'Ghana' }, { name: 'USA' }, { name: 'Canada' }];
-// var timezoneList = [{ name: 'West Africa/Lagos' }, { name: 'Europe/London' },
-// { name: 'America/California' }, { name: 'Middle East/New Delhi' }];
-// var genderList = [{ name: 'male' }, { name: 'female' }];
 
 let firstError = "first name must be up to 2 characters and letters only";
 let employeeIdError = "valid employee Id required";
@@ -23,11 +14,6 @@ let countryError = " you are yet to select a country";
 let timezoneError = " you are yet to select a timezone";
 let genderError = " you are yet to select a gender";
 let ageError = "valid age required";
-let timezoneSelected;
-let countrySelected;
-let genderSelected;
-
-// var errorFirst = document.getElementById("checkFirst");
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -48,7 +34,6 @@ const formValid = ({ formErrors, ...rest }) => {
   return valid;
 };
 class Signup extends React.Component {
-  // country: 'Select Country', gender: 'Select Gender', genderSelected: '', timezone: 'Select Timezone',
   constructor(props) {
     super(props);
     this.state = {
@@ -70,10 +55,14 @@ class Signup extends React.Component {
     // errorFirst.style.display = "none";
     if (!formValid(this.state)) {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+      // this.setState({})
     }
   };
 
   handleChange = e => {
+    console.log(e.target.value, e.target.name);
+
+
     this.setState({
       errorFirst: false, errorLast: false, errorEmail: false, errorPassword: false, errorEmployee: false,
       errorCountry: false, errorTimezone: false, errorAge: false, errorGender: false
@@ -102,14 +91,14 @@ class Signup extends React.Component {
         break;
 
       case "country":
-        formErrors.country = this.state.country === "Select Country" ? countryError : "";
+        formErrors.country = value.length < 1 ? countryError : "";
         break;
 
       case "gender":
-        formErrors.gender = this.state.gender === 'Select Gender' ? genderError : "";
+        formErrors.gender = value.length < 1 ? genderError : "";
         break;
       case "timezone":
-        formErrors.timezone = this.state.timezone === "Select Timezone" ? timezoneError : "";
+        formErrors.timezone = value.length < 1 ? timezoneError : "";
         break;
 
       case "email":
@@ -128,6 +117,7 @@ class Signup extends React.Component {
     this.setState({ formErrors, [name]: value });
 
 
+
   };
 
   successSubmit = async () => {
@@ -135,44 +125,33 @@ class Signup extends React.Component {
     this.setState({ submitLoader });
     try {
       const body = {
-        "employee_id": this.state.employee_id,
-        "first_name": this.state.firstName,
-        "last_name": this.state.lastName,
-        "age": parseFloat(this.state.age),
-        "gender": this.state.gender,
-        "country": this.state.country,
-        "timezone": this.state.timezone,
-        "email": this.state.email,
-        "is_admin": false,
-        "password": this.state.password
+        "employee_id": this.state.employee_id, "first_name": this.state.firstName,
+        "last_name": this.state.lastName, "age": parseFloat(this.state.age),
+        "gender": this.state.gender, "country": this.state.country, "timezone": this.state.timezone,
+        "email": this.state.email, "is_admin": false, "password": this.state.password
       }
+
+
       const res = await register(body);
       storeToken(res.data.data.employee.is_admin, res.data.data.token);
       const checkToken = getToken();
-      if (checkToken[0] === 'false') {
-        this.props.history.push('/dashboard');
-      }
-      if (checkToken[0] === 'true') {
-        this.props.history.push('/admin-dashboard');
-      }
-
-
-
-
+      if (checkToken[0] === 'false') { this.props.history.push('/dashboard'); }
+      if (checkToken[0] === 'true') { this.props.history.push('/admin-dashboard'); }
     } catch (err) {
-      console.log('An error occured', err.response.data.data.error);
-      this.setState({ serverError: 'error encounter during registration' });
+      if (!err.response.data['message']) { this.setState({ serverError: 'error encounter during registration' }); return; }
+      else if (err.response.data['message']) {
+        this.setState({ serverError: err.response.data['message'] });
+      }
     }
   }
+
 
   getGender = async () => {
     try {
       const { data } = await gender();
       this.setState({ genderList: data.data });
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        console.log(error.response.data);
-      }
+      if (error.response && error.response.status === 400) { console.log(error.response.data); }
     }
   }
 
@@ -181,13 +160,9 @@ class Signup extends React.Component {
       const { data } = await country();
       this.setState({ countryList: data.data });
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        console.log(error.response.data);
-
-      }
+      if (error.response && error.response.status === 400) { console.log(error.response.data); }
     }
   }
-
 
   componentDidMount() {
     this.getGender();
@@ -216,8 +191,6 @@ class Signup extends React.Component {
       if (this.state.gender === "Select Gender") { this.setState({ errorGender: true }); }
       if (this.state.age === null) { this.setState({ errorAge: true }); }
     }
-
-
 
   }
   render() {
@@ -354,7 +327,7 @@ class Signup extends React.Component {
 
                     {this.state.errorGender ? <span id="checkGender"
                       className="text-danger">{genderError}</span> : ""}
-                    {formErrors.gender !== "Select Gender" && (
+                    {formErrors.gender !== "" && (
                       <span className="text-danger">{formErrors.gender}</span>
                     )}
                   </div>
@@ -362,20 +335,20 @@ class Signup extends React.Component {
 
                 <div className="form-group">
                   <label htmlFor="country">Country</label>
-                  <select className="form-control" onChange={this.handleChange} name="country" id="country">
-                    {countryList.length > 0 ? <React.Fragment>
-                      <option ></option>
-                      {
-                        countryList.map((item, i) => {
-                          return <option value={item.name} key={i}>{item.name}</option>
-                        })
-                      }
-                    </React.Fragment> : <option>Please wait</option>}
+                  <select className="form-control" onChange={this.handleChange} name="country" >
+
+                    <option ></option>
+                    {
+                      countryList.map((item, i) => {
+                        return <option value={item.name} key={i}>{item.name}</option>
+                      })
+                    }
+
                   </select>
 
                   {this.state.errorCountry ? <span id="checkCountry"
                     className="text-danger">{countryError}</span> : ""}
-                  {formErrors.country !== "Select Country" && (
+                  {formErrors.country !== "" && (
                     <span className="text-danger">{formErrors.country}</span>
                   )}
                 </div>
@@ -393,7 +366,7 @@ class Signup extends React.Component {
                   </select>
                   {this.state.errorTimezone ? <span id="checkTimezone"
                     className="text-danger">{timezoneError}</span> : ""}
-                  {formErrors.timezone !== "Select Timezone" && (
+                  {formErrors.timezone !== "" && (
                     <span className="text-danger">{formErrors.timezone}</span>
                   )}
                 </div>

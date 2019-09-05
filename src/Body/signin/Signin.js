@@ -146,8 +146,8 @@ class Signin extends React.Component {
         </div>
 
         {/* body div */}
-        <div>
-          <div className="row" style={{ position: 'absolute' }}>
+        <div style={{ marginBottom: '10%' }}>
+          <div className="row" >
             <div className="col-6 col-md-6">
               <img style={{ width: '100%', height: '100%' }} src={require('./../../img/sick-employee.jpg')} className="img-responsive" alt="absence" />
 
