@@ -43,7 +43,6 @@ class SignupAdmin extends Form {
 
   doSubmit = async () => {
     try {
-      const { data } = this.state;
       // below code will reload the application & direct user to url below
       const { data: userdata } = await adminRegister(this.serverData(this.state.data));
       console.log(userdata);

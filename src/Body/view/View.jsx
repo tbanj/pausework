@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import env from '../../env';
 
-import { verifyUser, getToken, removeToken } from '../services/authService.js';
-import dummy from '../../assets/user-unisex-512.png';
+import { removeToken } from '../services/authService.js';
+// import dummy from '../../assets/user-unisex-512.png';
 import Multiselect from "../dropdown_multiselect/Multiselect.jsx";
 import Header from '../../Header/Header';
 

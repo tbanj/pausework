@@ -90,10 +90,7 @@ class NewAbsence extends React.Component {
   componentDidMount() {
     //   componentDidMount is the method that makes the data
     // available once the page load
-
-
   }
-
 
   handleSubmit = e => {
     e.preventDefault();
@@ -161,7 +158,7 @@ class NewAbsence extends React.Component {
         "approve_message": "not yet reviewed",
         "approved_by": "not approved yet",
       }
-      const res = await axios.post(`${env.api}/leave`, body, { headers: { 'Authorization': `Bearer ${token}`, 'is_admin': `Bearer ${isAdmin}` } });
+      await axios.post(`${env.api}/leave`, body, { headers: { 'Authorization': `Bearer ${token}`, 'is_admin': `Bearer ${isAdmin}` } });
       setTimeout(() => {
         this.props.history.push('/dashboard');
       }, 4000);

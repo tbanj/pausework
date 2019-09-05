@@ -67,13 +67,7 @@ class ParentTable extends Component {
       sortColumn,
     } = this.state;
     // removeColumn, requiredColumns,statusIconType, approve_status, approveState, viewAppText
-    const { leaveSum, dataError, daysLeft, ...rest } = this.props;
-
-    // const filtered =
-    //   selectedGenre && selectedGenre._id
-    //     ? AllMovies.filter(m => m.genre._id === selectedGenre._id)
-    //     : AllMovies;
-
+    const { leaveSum, dataError, daysLeft, isFetchinga, ...rest } = this.props;
     const filtered = leaveSum;
     // sorting
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
@@ -99,7 +93,7 @@ class ParentTable extends Component {
               </div>
             </React.Fragment>
           ) : (
-              <h3>{daysLeft ? "No leave record found" : "please wait "} <span><i className={daysLeft ? "" : `spinner-border text-primary`}></i></span></h3>
+              <h3>{isFetchinga === true ? " please wait" : "No leave record found "} <span><i className={isFetchinga === true ? `spinner-border text-primary` : ""}></i></span></h3>
             )}
         </div>
         <Pagination

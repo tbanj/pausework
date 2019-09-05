@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 
 import { coverDate } from '../helper/helper.js';
 import { verifyUser, getToken, getLeaves, InsertAprovalName } from '../services/authService.js';
-import http from "../services//httpService.js";
+// import http from "../services/httpService.js";
 import ParentTable from './../../table/component/ParentTable';
 
 import 'react-infinite-calendar/styles.css'; // only needs to be imported once
@@ -28,14 +28,49 @@ class Dashboard extends React.Component {
         this.state = {
             leaveSum: [], checkState: [], clickNotice: null, showMore: false, staffInfo: [], checkD: [],
             markedDate: [], dateCommence: [], rejectedRequest: [], dataError: [], summaryTableHeader: [],
-            daysLeft: "", tableSort: '', pendingRejectedRequest: [], approveRequest: [], count: 0,
-            updateleaveSum: [], errorData: 'loading', isFetching: true, remainStaffCalendar: [],
+            daysLeft: "", tableSort: '', pendingRejectedRequest: [], approveRequest: [], count: 0, isFetchingAccept: true,
+            updateleaveSum: [], errorData: 'loading', isFetching: true, remainStaffCalendar: [], isFetchingReject: true
         };
 
         // mounting function
         this.logout = this.logout.bind(this);
         if (!verifyUser()) this.props.history.push('/');
     }
+
+    getList = async () => {
+        try {
+            let checker = await getLeaves();
+            this.setState({ data: checker.data.data });
+            console.log(checker);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    InsertAprrovalDetail = async () => {
+
+
+        let totalLeav = this.state.data;
+        try {
+            for (let index = 0; index < totalLeav.length; index++) {
+                if (totalLeav[index]['approved_by'] !== "not approved yet") {
+                    const { data: adminStaff } = await InsertAprovalName(totalLeav[index]['approved_by']);
+                    totalLeav[index]['approved_by'] = `${adminStaff['data']['first_name']} ${adminStaff['data']['last_name']}`
+                    this.setState({ checkD: adminStaff });
+                }
+            }
+            this.setState({ updateleaveSum: totalLeav, isFetching: false });
+            if (this.state.updateleaveSum.length === 0 && this.state.isFetching === false) {
+                this.setState({ errorData: 'check your network' });
+            }
+            this.getLeaveTypes(this.state.updateleaveSum);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     getLeaveTypes = (updateleaveSum) => {
         if (!(getToken())) { return this.props.history.push('/'); }
@@ -86,8 +121,10 @@ class Dashboard extends React.Component {
         this.getAcceptedStartDate(acceptedLeave);
         this.setState({
             approveRequest: acceptedLeave, rejectedRequest, pendingRejectedRequest: notAccepted,
-            isFetching: false, tableSort: { path: "leave_type", order: "asc" }
+            isFetching: false, tableSort: { path: "leave_type", order: "asc" },
+            isFetchingAccept: false, isFetchingReject: false
         });
+
     }
 
     getAcceptedStartDate = (totalLeave) => {
@@ -136,36 +173,7 @@ class Dashboard extends React.Component {
         this.setState({ summaryTableHeader: list });
     }
 
-    getList = async () => {
-        try {
-            let checker = await getLeaves();
-            this.setState({ data: checker.data.data });
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
 
-
-    InsertAprrovalDetail = async () => {
-        let totalLeav = this.state.data;
-        try {
-            for (let index = 0; index < totalLeav.length; index++) {
-                if (totalLeav[index]['approved_by'] !== "not approved yet") {
-                    const { data: adminStaff } = await InsertAprovalName(totalLeav[index]['approved_by']);
-                    totalLeav[index]['approved_by'] = `${adminStaff['data']['first_name']} ${adminStaff['data']['last_name']}`
-                    this.setState({ checkD: adminStaff });
-                }
-            }
-            this.setState({ updateleaveSum: totalLeav, isFetching: false });
-            if (this.state.updateleaveSum.length === 0 && this.state.isFetching === false) {
-                this.setState({ errorData: 'check your network' });
-            }
-            this.getLeaveTypes(totalLeav);
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
     componentDidMount() {
         this.getList();
@@ -179,7 +187,6 @@ class Dashboard extends React.Component {
     }
 
     componentWillUnmount() {
-        http.signal.cancel('Api is being canceled');
         console.log('destroy http request');
     }
 
@@ -189,6 +196,7 @@ class Dashboard extends React.Component {
     }
 
     logout() {
+        // http.signal.cancel('Api is being canceled');
         localStorage.removeItem('pausework-token');
         localStorage.removeItem('pausework-info');
         this.props.history.push('/');
@@ -201,7 +209,7 @@ class Dashboard extends React.Component {
         // is use to print the contents of the array
         // this will make below array available once the app has  initialize
         if (!verifyUser()) return <Redirect to="/" />
-        const { approveRequest, daysLeft, pendingRejectedRequest, summaryTableHeader,
+        const { approveRequest, daysLeft, pendingRejectedRequest, summaryTableHeader, isFetchingReject, isFetchingAccept,
             tableSort, rejectedRequest, requiredColumns, staffInfo, dateCommence, dataError } = this.state;
 
         return (
@@ -266,7 +274,7 @@ class Dashboard extends React.Component {
                                                         <p style={{ marginBottom: '0px' }}>{data.leave_type}</p>
                                                         <p className="pTag">{data.off_days} Days</p>
                                                     </div>
-                                                )) : <div > {daysLeft ? "no data found" : <span><i className={`spinner-border text-primary`}></i></span>}</div>
+                                                )) : <div > {this.state.approveRequest.length === 0 && this.state.isFetchingAccept === false ? "no data found" : <span><i className={`spinner-border text-primary`}></i></span>}</div>
 
 
                                             }
@@ -380,15 +388,15 @@ class Dashboard extends React.Component {
                         </div>
 
                         <p className="subTitleOne">Summary of Submitted Leave Request</p>
-                        <ParentTable leaveSum={pendingRejectedRequest}   {...this.props} tableSort={tableSort}
+                        <ParentTable leaveSum={pendingRejectedRequest}   {...this.props} tableSort={tableSort} isFetchinga={isFetchingReject}
                             daysLeft={daysLeft} approve_status={'approve_status'} approveState={'Status'} viewAppText={`view application`}
                             requiredColumns={summaryTableHeader} removeColumn={[0, -1]}
                         />
 
                         {/* no table imported  */}
                         <p className="subTitleOne">All Absence</p>
-                        <ParentTable leaveSum={approveRequest} dataError={dataError} {...this.props} tableSort={tableSort}
-                            daysLeft={daysLeft} approve_status={'approve_status'} approveState={'Status'} viewAppText={`view application`}
+                        <ParentTable leaveSum={approveRequest} dataError={dataError} {...this.props} tableSort={tableSort} isFetchinga={isFetchingAccept}
+                            daysLeft={approveRequest.length} approve_status={'approve_status'} approveState={'Status'} viewAppText={`view application`}
                             requiredColumns={requiredColumns} removeColumn={[0, -1]} />
                     </div>
 

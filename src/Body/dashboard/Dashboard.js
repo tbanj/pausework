@@ -4,7 +4,7 @@ import InfiniteCalendar from 'react-infinite-calendar';
 import { Redirect } from "react-router-dom";
 
 import { coverDate } from '../helper/helper.js';
-import http from "../services/httpService.js";
+// import http from "../services/httpService.js";
 import { verifyUser, getUserLeaves, InsertAprovalName } from '../services/authService.js';
 import ParentTable from './../../table/component/ParentTable';
 
@@ -31,8 +31,8 @@ class Dashboard extends React.Component {
         super(props);
 
         this.state = {
-            leaveSum: [], checkState: [], rejectedRequest: [], dataError: [],
-            markedDate: [], dateCommence: [], summaryTableHeader: [], isFetching: true,
+            leaveSum: [], checkState: [], rejectedRequest: [], dataError: [], isFetchingReject: true,
+            markedDate: [], dateCommence: [], summaryTableHeader: [], isFetching: true, isFetchingAccept: true,
             daysLeft: "", tableSort: '', pendingRejectedRequest: [], remainStaffCalendar: [],
             approveRequest: [], count: 0, clickNotice: null, showMore: false, staffInfo: [],
         };
@@ -45,15 +45,15 @@ class Dashboard extends React.Component {
         try {
             let checker = await getUserLeaves();
             this.setState({ data: checker.data.data });
+
         }
         catch (error) {
             console.log(error);
-
         }
     }
 
-    InsertAprrovalDetail = async () => {
-        let totalLeav = this.state.data;
+    InsertAprrovalDetail = async (totalLeav) => {
+
         try {
             for (let index = 0; index < totalLeav.length; index++) {
                 if (totalLeav[index]['approved_by'] !== "not approved yet") {
@@ -111,9 +111,11 @@ class Dashboard extends React.Component {
         let daysLeft = this.availableDays(acceptedLeave);
         this.getAcceptedStartDate(acceptedLeave);
         this.setState({
-            approveRequest: acceptedLeave, rejectedRequest, isFetching: false,
-            daysLeft, pendingRejectedRequest: notAccepted, tableSort: { path: "leave_type", order: "asc" }
+            approveRequest: acceptedLeave, rejectedRequest, isFetching: false, isFetchingAccept: false,
+            isFetchingReject: false, daysLeft, pendingRejectedRequest: notAccepted,
+            tableSort: { path: "leave_type", order: "asc" }
         });
+
     }
 
     getAcceptedStartDate = (totalLeave) => {
@@ -170,16 +172,12 @@ class Dashboard extends React.Component {
         const indexPlace = list.indexOf(checkList);
         list[indexPlace] = { path: "off_days", label: "Request Days" };
         this.setState({ summaryTableHeader: list });
-
-
     }
-
-
 
     componentDidMount() {
         //   componentDidMount is the method that makes the data available once the page load
         this.getList();
-        this.timer = setTimeout(() => this.InsertAprrovalDetail(), 5000);
+        this.timer = setTimeout(() => this.InsertAprrovalDetail(this.state.data), 5000);
         this.getTableHeaderSummary();
         this.setState({ staffInfo: staffDetail });
         this.setState({ requiredColumns: this.getTableHeader() });
@@ -189,7 +187,7 @@ class Dashboard extends React.Component {
     }
 
     componentWillUnmount() {
-        http.signal.cancel('Api is being canceled');
+        // http.signal.cancel('Api is being canceled');
         console.log('destroy http request');
     }
 
@@ -209,7 +207,7 @@ class Dashboard extends React.Component {
         if (!verifyUser()) return <Redirect to="/" />
         // is use to print the contents of the array
         // this will make below array available once the app has  initialize
-        const { approveRequest, daysLeft, pendingRejectedRequest, summaryTableHeader,
+        const { approveRequest, daysLeft, pendingRejectedRequest, summaryTableHeader, isFetchingReject, isFetchingAccept,
             tableSort, rejectedRequest, requiredColumns, staffInfo, dateCommence, dataError } = this.state;
 
         return (
@@ -404,14 +402,13 @@ class Dashboard extends React.Component {
                         <p className="subTitleOne">Summary of Submitted Leave Request</p>
                         <ParentTable leaveSum={pendingRejectedRequest}   {...this.props} tableSort={tableSort}
                             daysLeft={daysLeft} approve_status={'approve_status'} approveState={'Status'} viewAppText={`view application`}
-                            requiredColumns={summaryTableHeader} removeColumn={[0, -1]}
-                        />
+                            requiredColumns={summaryTableHeader} removeColumn={[0, -1]} isFetchinga={isFetchingReject} />
 
                         {/* no table imported  */}
                         <p className="subTitleOne">All Absence</p>
                         <ParentTable leaveSum={approveRequest} dataError={dataError} {...this.props} tableSort={tableSort}
                             daysLeft={daysLeft} approve_status={'approve_status'} approveState={'Status'} viewAppText={`view application`}
-                            requiredColumns={requiredColumns} removeColumn={[0, -1]} />
+                            requiredColumns={requiredColumns} removeColumn={[0, -1]} isFetchinga={isFetchingAccept} />
                     </div>
 
                 </div>

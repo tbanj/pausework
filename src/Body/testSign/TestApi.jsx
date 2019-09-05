@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import env from '../../env';
-import { getLeaves, getToken, InsertAprovalName } from "../services/authService.js";
+import { getLeaves, InsertAprovalName } from "../services/authService.js";
 
 
 class TestApi extends Component {
@@ -21,7 +19,6 @@ class TestApi extends Component {
 
         let totalLeav = this.state.data;
         try {
-            let userInfo = getToken();
             for (let index = 0; index < totalLeav.length; index++) {
                 if (totalLeav[index]['approved_by'] !== "not approved yet") {
                     const { data: adminStaff } = await InsertAprovalName(totalLeav[index]['approved_by'])

@@ -8,12 +8,6 @@ import './timeoff.scss';
 
 class Timeoff extends React.Component {
 
-  constructor(props) {
-    super(props);
-
-
-  }
-
   handleAdminPage = () => {
     const elBtnFade = findDOMNode(this.refs.btnFade);
     $(elBtnFade).fadeToggle(1000);

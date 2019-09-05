@@ -12,7 +12,6 @@ class Header extends Component {
   }
 
   render() {
-    const { onLogout } = this.props;
     return (
 
       <div className="row navBackground fixed-top">

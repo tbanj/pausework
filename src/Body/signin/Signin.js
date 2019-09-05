@@ -89,6 +89,7 @@ class Signin extends React.Component {
 
       setTimeout(() => {
         this.props.history.push(`/${data.data.urlTo}`);
+        // window.location = `/${data.data.urlTo}`;
       }, 2000);
       swal("Login Successful!", "You clicked the button!", "success");
     } catch (err) {
